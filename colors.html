@@ -382,7 +382,7 @@
       speak(`Correct! ${csqAnswer}`);
       pipUpdateBest('pipColorQuizBest', csqScore);
       pipAnnounceNewBadges();
-      setTimeout(newCsqRound, 1500);
+      setTimeout(newCsqRound, 1900);
     } else {
       csqLocked = true;
       btn.classList.add('wrong');
@@ -391,7 +391,7 @@
       if(correctBtn) correctBtn.classList.add('correct');
       feedback.textContent = `Not quite — it's ${csqAnswer}!`;
       speak(csqAnswer);
-      setTimeout(newCsqRound, 1800);
+      setTimeout(newCsqRound, 2200);
     }
   }
 

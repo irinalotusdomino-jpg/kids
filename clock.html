@@ -390,7 +390,6 @@
       btn.addEventListener('click', ()=> handleQuizPick(btn, opt));
       optWrap.appendChild(btn);
     });
-    speak(quizAnswer.replace("It's ",""));
   }
 
   function handleQuizPick(btn, opt){
@@ -405,7 +404,7 @@
       speak('Correct! ' + quizAnswer);
       pipUpdateBest('pipClockBest', quizScore);
       pipAnnounceNewBadges();
-      setTimeout(newQuizRound, 1600);
+      setTimeout(newQuizRound, 2200);
     } else {
       quizLocked = true;
       btn.classList.add('wrong');
@@ -414,7 +413,7 @@
       if(correctBtn) correctBtn.classList.add('correct');
       feedback.textContent = 'Not quite — ' + quizAnswer;
       speak(quizAnswer);
-      setTimeout(newQuizRound, 1900);
+      setTimeout(newQuizRound, 2400);
     }
   }
 

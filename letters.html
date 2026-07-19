@@ -512,7 +512,7 @@
       speak(`Correct! ${currentTarget[1]} starts with ${currentTarget[0]}`);
       pipUpdateBest('pipMatchBest', matchScore);
       pipAnnounceNewBadges();
-      setTimeout(newRound, 1600);
+      setTimeout(newRound, 2000);
     } else {
       matchLocked = true;
       btn.classList.add('wrong');
@@ -521,7 +521,7 @@
       if(correctBtn) correctBtn.classList.add('correct');
       feedback.textContent = `Not quite — ${currentTarget[1]} starts with ${currentTarget[0]}!`;
       speak(`It's ${currentTarget[0]}, for ${currentTarget[1]}`);
-      setTimeout(newRound, 1900);
+      setTimeout(newRound, 2300);
     }
   }
 

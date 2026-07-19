@@ -473,7 +473,7 @@
       const quizFaceOk = document.getElementById('quizFace');
       applyFaceClass(quizFaceOk, fqCurrentCls);
       quizFaceOk.style.opacity = '1';
-      setTimeout(newFqRound, 1600);
+      setTimeout(newFqRound, 2000);
     } else {
       fqLocked = true;
       btn.classList.add('wrong');
@@ -485,7 +485,7 @@
       quizFace.style.opacity = '1';
       feedback.textContent = `Not quite — Pip feels ${fqAnswer.toLowerCase()}!`;
       speak(`Pip feels ${fqAnswer.toLowerCase()}`);
-      setTimeout(newFqRound, 1900);
+      setTimeout(newFqRound, 2300);
     }
   }
 

@@ -297,7 +297,7 @@
       speak(`Correct! ${aqAnswer} says ${aqCurrent[2].replace('!','')}`);
       pipUpdateBest('pipAnimalQuizBest', aqScore);
       pipAnnounceNewBadges();
-      setTimeout(newAqRound, 1600);
+      setTimeout(newAqRound, 2200);
     } else {
       aqLocked = true;
       btn.classList.add('wrong');
@@ -306,7 +306,7 @@
       if(correctBtn) correctBtn.classList.add('correct');
       feedback.textContent = `Not quite — it's a ${aqAnswer}!`;
       speak(`It's a ${aqAnswer}. ${aqAnswer} says ${aqCurrent[2].replace('!','')}`);
-      setTimeout(newAqRound, 1900);
+      setTimeout(newAqRound, 2400);
     }
   }
 

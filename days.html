@@ -361,7 +361,7 @@
       speak(`Correct! ${dqAnswer}`);
       pipUpdateBest('pipCalQuizBest', dqScore);
       pipAnnounceNewBadges();
-      setTimeout(newDqRound, 1600);
+      setTimeout(newDqRound, 2000);
     } else {
       dqLocked = true;
       btn.classList.add('wrong');
@@ -370,7 +370,7 @@
       if(correctBtn) correctBtn.classList.add('correct');
       feedback.textContent = `Not quite — it's ${dqAnswer}!`;
       speak(dqAnswer);
-      setTimeout(newDqRound, 1900);
+      setTimeout(newDqRound, 2300);
     }
   }
 
