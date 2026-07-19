@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#8FD9EA">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Pip's Orchard">
+<title>Days &amp; Months — Pip's Orchard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="app.js"></script>
+<style>
+  #dhero{
+    background:linear-gradient(180deg,var(--sky2-top) 0%, var(--sky2-bottom) 78%);
+    padding-bottom:24px;
+  }
+  .dhero-content{position:relative; z-index:4; text-align:center; padding:18px 6% 6px;}
+  .dhero-content h1{font-size:2.3rem; margin:8px 0 6px; color:var(--bark-dark);}
+  .dhero-content p{margin:0; color:#4A3B2C; font-size:1.05rem;}
+
+  .subnav{
+    position:sticky; top:78px; z-index:20;
+    display:flex; gap:10px; justify-content:center; flex-wrap:wrap;
+    background:rgba(255,248,234,0.92); backdrop-filter:blur(6px);
+    padding:12px 5%; box-shadow:0 4px 14px rgba(58,46,35,0.08);
+  }
+  .subnav a{
+    text-decoration:none; font-weight:700; font-size:0.85rem; color:var(--bark-dark);
+    background:#fff; padding:8px 16px; border-radius:20px; box-shadow:var(--shadow);
+    white-space:nowrap;
+  }
+
+  main{max-width:1100px; margin:0 auto; padding:36px 6% 80px;}
+  .section-head{text-align:center; max-width:600px; margin:0 auto 28px;}
+  .section-head h2{font-size:1.9rem; color:var(--bark-dark); margin:8px 0 6px;}
+  .section-head p{color:#5A4A38; margin:0;}
+  section.block{scroll-margin-top:140px; margin-bottom:70px;}
+
+  /* ---------- Today card ---------- */
+  .today-card{
+    background:var(--cream); border-radius:26px; box-shadow:var(--shadow);
+    padding:26px 30px; text-align:center; max-width:460px; margin:0 auto;
+  }
+  .today-big{font-family:'Baloo 2'; font-size:1.6rem; color:var(--apple-red);}
+  .today-sub{color:#5A4A38; font-weight:700; margin-top:4px;}
+  .today-btn{
+    margin-top:14px; border:none; border-radius:20px; padding:10px 22px;
+    background:var(--blue); color:#fff; font-weight:700; cursor:pointer; box-shadow:var(--shadow);
+  }
+
+  /* ---------- Days grid ---------- */
+  .day-grid{
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(130px,1fr));
+    gap:14px;
+  }
+  .day-card{
+    background:var(--cream); border-radius:18px; box-shadow:var(--shadow);
+    padding:16px 10px; text-align:center; cursor:pointer;
+  }
+  .day-card:nth-child(4n+1){background:linear-gradient(160deg,#fff,#FFE8F0);}
+  .day-card:nth-child(4n+2){background:linear-gradient(160deg,#fff,#E3FBF6);}
+  .day-card:nth-child(4n+3){background:linear-gradient(160deg,#fff,#F1E9FF);}
+  .day-card:nth-child(4n+4){background:linear-gradient(160deg,#fff,#E3F5FC);}
+  .day-card.is-today{background:linear-gradient(160deg,#fff,#FFF0EE); box-shadow:0 0 0 3px var(--apple-red), var(--shadow);}
+  .day-num{font-family:'Baloo 2'; font-size:1.3rem; color:var(--apple-red);}
+  .day-name{font-family:'Baloo 2'; font-weight:700; color:var(--bark-dark); font-size:0.95rem; margin-top:2px;}
+  .day-abbr{font-size:0.72rem; color:#8A7457; margin-top:2px;}
+
+  /* ---------- Months grid ---------- */
+  .month-grid{
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(120px,1fr));
+    gap:14px;
+  }
+  .month-card{
+    border-radius:18px; box-shadow:var(--shadow);
+    padding:16px 10px; text-align:center; cursor:pointer; transition:transform .15s ease;
+  }
+  .month-card.is-month{box-shadow:0 0 0 3px var(--apple-red), var(--shadow);}
+  .month-emoji{font-size:1.6rem;}
+  .month-name{font-family:'Baloo 2'; font-weight:700; color:var(--bark-dark); font-size:0.92rem; margin-top:2px;}
+  .month-season{font-size:0.72rem; color:#6E4527; font-weight:700; margin-top:2px;}
+  .season-winter{background:linear-gradient(160deg,#fff,#E8F3FA);}
+  .season-spring{background:linear-gradient(160deg,#fff,#EFFAEA);}
+  .season-summer{background:linear-gradient(160deg,#fff,#FFF6DE);}
+  .season-fall{background:linear-gradient(160deg,#fff,#FBEADC);}
+
+  /* ---------- Quiz ---------- */
+  .dq-wrap{display:flex; gap:30px; justify-content:center; align-items:center; flex-wrap:wrap;}
+  .dq-stage{background:var(--cream); border-radius:26px; box-shadow:var(--shadow); padding:26px; text-align:center; max-width:260px;}
+  .dq-question{font-family:'Baloo 2'; font-weight:700; color:var(--bark-dark); font-size:1.15rem; min-height:3.4rem;}
+  .dq-card{background:var(--cream); border-radius:26px; box-shadow:var(--shadow); padding:26px; text-align:center; max-width:340px;}
+  .dq-score{font-family:'Baloo 2'; font-weight:700; color:var(--apple-red); margin-bottom:10px;}
+  .dq-options{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:6px;}
+  .dq-btn{
+    border:none; border-radius:14px; padding:12px 8px; font-family:'Quicksand'; font-weight:700;
+    background:#fff; color:var(--bark-dark); box-shadow:var(--shadow); cursor:pointer; font-size:0.85rem;
+  }
+  .dq-btn.correct{background:var(--leaf-light); color:#fff; animation:pop .3s ease;}
+  .dq-btn.wrong{background:#F2A39C; animation:shake .35s ease;}
+  @keyframes pop{0%{transform:scale(1);}50%{transform:scale(1.1);}100%{transform:scale(1);}}
+  @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-7px);}75%{transform:translateX(7px);}}
+  .dq-feedback{margin-top:12px; font-weight:700; min-height:1.4rem; color:var(--bark-dark);}
+
+  .back-cta{display:flex; justify-content:center; margin-top:10px;}
+
+  @media (max-width:600px){
+    .dhero-content h1{font-size:1.9rem;}
+    .day-grid, .month-grid{grid-template-columns:repeat(auto-fill, minmax(98px,1fr)); gap:10px;}
+    .subnav{top:64px;}
+    main{padding:26px 5% 70px;}
+  }
+</style>
+</head>
+<body>
+
+<section class="section" id="dhero">
+  <div class="sun"></div>
+  <div class="cloud cloud1"></div>
+  <div class="cloud cloud2"></div>
+
+  <nav class="nav-bar">
+    <a href="index.html" class="logo"><span class="logo-dot"></span> Pip's Orchard</a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="letters.html">Letters &amp; Numbers</a>
+      <a href="emotions.html">Emotions</a>
+      <a href="colors.html">Colors &amp; Shapes</a>
+      <a href="animals.html">Animals</a>
+      <a href="days.html" class="active">Days &amp; Months</a>
+      <a href="clock.html">Clock</a>
+      <a href="tracker.html">My Tracker</a>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>
+  </nav>
+
+  <div class="dhero-content">
+    <span class="eyebrow">CALENDAR TIME 🗓️</span>
+    <h1>Days &amp; Months</h1>
+    <p>Learn the days of the week and months of the year with Pip!</p>
+    <p class="ua-line">Вивчай дні тижня та місяці року разом із Піпом!</p>
+  </div>
+  <div class="mascot-block" style="justify-content:center; margin-top:6px;">
+    <div class="pip-wrap"><div class="pip">
+      <div class="pip-crown"></div><div class="pip-leaf"></div><div class="pip-stem"></div>
+      <div class="pip-body"></div>
+      <div class="pip-eye l"></div><div class="pip-eye r"></div>
+      <div class="pip-cheek l"></div><div class="pip-cheek r"></div>
+      <div class="pip-mouth"></div>
+      <div class="pip-arm l"></div><div class="pip-arm r"></div>
+    </div></div>
+    <div class="speech">What day is it today? 🗓️</div>
+  </div>
+</section>
+
+<div class="subnav">
+  <a href="#today">🌟 Today</a>
+  <a href="#days">🗓️ Days</a>
+  <a href="#months">🗓️ Months</a>
+  <a href="#dquiz">🎧 Quiz</a>
+</div>
+
+<main>
+  <section class="block" id="today">
+    <div class="section-head">
+      <span class="eyebrow">RIGHT NOW</span>
+      <h2>What day is it?</h2>
+      <p class="ua-line">Який сьогодні день?</p>
+    </div>
+    <div class="today-card">
+      <div class="today-big" id="todayBig">Loading...</div>
+      <div class="today-sub" id="todaySub"></div>
+      <button class="today-btn" id="todaySpeakBtn">🔊 Say it</button>
+    </div>
+  </section>
+
+  <section class="block" id="days">
+    <div class="section-head">
+      <span class="eyebrow">7 DAYS</span>
+      <h2>Days of the Week</h2>
+      <p>Tap a day to hear it!</p>
+      <p class="ua-line">Натисни на день, щоб почути його!</p>
+    </div>
+    <div class="day-grid" id="dayGrid"></div>
+  </section>
+
+  <section class="block" id="months">
+    <div class="section-head">
+      <span class="eyebrow">12 MONTHS</span>
+      <h2>Months of the Year</h2>
+      <p>Each month belongs to a season — can you spot the pattern?</p>
+      <p class="ua-line">Кожен місяць належить порі року — помітиш закономірність?</p>
+    </div>
+    <div class="month-grid" id="monthGrid"></div>
+  </section>
+
+  <section class="block" id="dquiz">
+    <div class="section-head">
+      <span class="eyebrow">GAME</span>
+      <h2>Calendar Quiz</h2>
+      <p>Answer questions about days, months, and seasons!</p>
+      <p class="ua-line">Відповідай на запитання про дні, місяці та пори року!</p>
+    </div>
+    <div class="dq-wrap">
+      <div class="dq-stage">
+        <div class="dq-question" id="dqQuestion"></div>
+      </div>
+      <div class="dq-card">
+        <div class="dq-score" id="dqScore">🍎 Score: 0</div>
+        <div class="dq-options" id="dqOptions"></div>
+        <div class="dq-feedback" id="dqFeedback"></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="back-cta">
+    <a class="cta" href="tracker.html">See my badges →</a>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner"><span class="footer-pip">🍎</span> Pip's Orchard — Learn English · <a href="parents.html">Для батьків</a></div>
+</footer>
+<button class="to-top-btn" id="toTopBtn" aria-label="Back to top">↑</button>
+
+<script>
+  function speak(text){
+    if(!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'en-US'; u.rate = 0.85; u.pitch = 1.05;
+    window.speechSynthesis.speak(u);
+  }
+
+  const days = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+  const dayAbbr = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+
+  const months = [
+    ['January','winter'], ['February','winter'], ['March','spring'],
+    ['April','spring'], ['May','spring'], ['June','summer'],
+    ['July','summer'], ['August','summer'], ['September','fall'],
+    ['October','fall'], ['November','fall'], ['December','winter']
+  ];
+  const seasonEmoji = { winter:'❄️', spring:'🌸', summer:'☀️', fall:'🍂' };
+  const seasonLabel = { winter:'Winter', spring:'Spring', summer:'Summer', fall:'Fall' };
+
+  const now = new Date();
+  const todayDayIdx = (now.getDay() + 6) % 7;
+  const todayMonthIdx = now.getMonth();
+
+  // ---------- Today card ----------
+  document.getElementById('todayBig').textContent = `Today is ${days[todayDayIdx]}!`;
+  document.getElementById('todaySub').textContent = `${months[todayMonthIdx][0]} · ${seasonLabel[months[todayMonthIdx][1]]} ${seasonEmoji[months[todayMonthIdx][1]]}`;
+  document.getElementById('todaySpeakBtn').addEventListener('click', ()=>{
+    speak(`Today is ${days[todayDayIdx]}, in the month of ${months[todayMonthIdx][0]}`);
+  });
+
+  // ---------- Days grid ----------
+  const dayGrid = document.getElementById('dayGrid');
+  days.forEach((name, i)=>{
+    const card = document.createElement('div');
+    card.className = 'day-card' + (i === todayDayIdx ? ' is-today' : '');
+    card.innerHTML = `
+      <div class="day-num">${i+1}</div>
+      <div class="day-name">${name}</div>
+      <div class="day-abbr">${dayAbbr[i]}${i === todayDayIdx ? ' · Today!' : ''}</div>`;
+    card.addEventListener('click', ()=>{
+      speak(name);
+      pipMarkDaySeen(name);
+      pipAnnounceNewBadges();
+    });
+    dayGrid.appendChild(card);
+  });
+
+  // ---------- Months grid ----------
+  const monthGrid = document.getElementById('monthGrid');
+  months.forEach(([name, season], i)=>{
+    const card = document.createElement('div');
+    card.className = `month-card season-${season}` + (i === todayMonthIdx ? ' is-month' : '');
+    card.innerHTML = `
+      <div class="month-emoji">${seasonEmoji[season]}</div>
+      <div class="month-name">${name}</div>
+      <div class="month-season">${seasonLabel[season]}</div>`;
+    card.addEventListener('click', ()=>{
+      speak(name);
+      pipMarkMonthSeen(name);
+      pipAnnounceNewBadges();
+    });
+    monthGrid.appendChild(card);
+  });
+
+  // ---------- Quiz ----------
+  let dqScore = 0;
+  let dqAnswer = '';
+  let dqLocked = false;
+
+  function shuffle(arr){
+    const a = arr.slice();
+    for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+    return a;
+  }
+
+  function newDqRound(){
+    dqLocked = false;
+    document.getElementById('dqFeedback').textContent = '';
+    const qEl = document.getElementById('dqQuestion');
+
+    const type = Math.floor(Math.random()*3);
+    let question, answer, pool;
+
+    if(type === 0){
+      const i = Math.floor(Math.random()*7);
+      const nextDay = days[(i+1)%7];
+      question = `What day comes after ${days[i]}?`;
+      answer = nextDay;
+      pool = days;
+    } else if(type === 1){
+      const i = Math.floor(Math.random()*12);
+      const [name, season] = months[i];
+      question = `What season is ${name} in?`;
+      answer = seasonLabel[season];
+      pool = Object.values(seasonLabel);
+    } else {
+      const i = Math.floor(Math.random()*12);
+      const prevMonth = months[(i+11)%12][0];
+      question = `What month comes before ${months[i][0]}?`;
+      answer = prevMonth;
+      pool = months.map(m=>m[0]);
+    }
+
+    qEl.textContent = question;
+    dqAnswer = answer;
+    const wrongs = shuffle(pool.filter(p => p !== answer)).slice(0,3);
+    const options = shuffle([answer, ...wrongs]);
+    const optWrap = document.getElementById('dqOptions');
+    optWrap.innerHTML = '';
+    options.forEach(opt=>{
+      const btn = document.createElement('button');
+      btn.className = 'dq-btn';
+      btn.textContent = opt;
+      btn.dataset.val = opt;
+      btn.addEventListener('click', ()=> handleDqPick(btn, opt));
+      optWrap.appendChild(btn);
+    });
+  }
+
+  function handleDqPick(btn, opt){
+    if(dqLocked) return;
+    const feedback = document.getElementById('dqFeedback');
+    if(opt === dqAnswer){
+      dqLocked = true;
+      btn.classList.add('correct');
+      dqScore++;
+      document.getElementById('dqScore').textContent = '🍎 Score: ' + dqScore;
+      feedback.textContent = `Yes! ${dqAnswer} is right! 🎉`;
+      speak(`Correct! ${dqAnswer}`);
+      pipUpdateBest('pipCalQuizBest', dqScore);
+      pipAnnounceNewBadges();
+      setTimeout(newDqRound, 1600);
+    } else {
+      dqLocked = true;
+      btn.classList.add('wrong');
+      const optWrap = document.getElementById('dqOptions');
+      const correctBtn = [...optWrap.children].find(b => b.dataset.val === dqAnswer);
+      if(correctBtn) correctBtn.classList.add('correct');
+      feedback.textContent = `Not quite — it's ${dqAnswer}!`;
+      speak(dqAnswer);
+      setTimeout(newDqRound, 1900);
+    }
+  }
+
+  newDqRound();
+  pipApplyMood();
+  pipInitChrome();
+</script>
+
+</body>
+</html>

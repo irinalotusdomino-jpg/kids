@@ -1,0 +1,16 @@
+{
+  "name": "Pip's Orchard — Learn English",
+  "short_name": "Pip's Orchard",
+  "description": "A friendly English-learning app for kids: letters, numbers, clock, emotions, colors, animals, and a daily tracker with Pip the apple.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#8FD9EA",
+  "theme_color": "#8FD9EA",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

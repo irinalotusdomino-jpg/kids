@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#8FD9EA">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Pip's Orchard">
+<title>My Tracker — Pip's Orchard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="app.js"></script>
+<style>
+  #thero{
+    background:linear-gradient(180deg,var(--sky2-top) 0%, var(--sky2-bottom) 70%);
+    padding-bottom:24px;
+  }
+  .thero-content{
+    position:relative; z-index:4; text-align:center;
+    padding:18px 6% 6px;
+  }
+  .thero-content h1{font-size:2.3rem; margin:8px 0 6px; color:var(--bark-dark);}
+  .thero-content p{margin:0; color:#4A3B2C; font-size:1.05rem;}
+
+  main{max-width:1000px; margin:0 auto; padding:36px 6% 80px;}
+
+  .top-stats{display:flex; gap:20px; flex-wrap:wrap; margin-bottom:36px;}
+  .stat-card{
+    flex:1; min-width:200px; background:var(--cream); border-radius:24px; box-shadow:var(--shadow);
+    padding:22px 24px; text-align:center;
+  }
+  .stat-card .big{font-family:'Baloo 2'; font-size:2.6rem; color:var(--apple-red);}
+  .stat-card .label{color:#5A4A38; font-weight:700; font-size:0.9rem; margin-top:4px;}
+  .stat-card.streak .big{color:#E07B2A;}
+
+  .scene{display:flex; justify-content:center; align-items:flex-end; gap:24px; margin-bottom:36px; flex-wrap:wrap;}
+
+  .basket-wrap{position:relative; width:230px; height:210px;}
+  .basket{
+    position:absolute; bottom:0; left:50%; transform:translateX(-50%);
+    width:190px; height:116px;
+    background:repeating-linear-gradient(90deg, var(--basket), var(--basket) 8px, var(--basket-dark) 8px, var(--basket-dark) 16px);
+    border-radius:0 0 42px 42px;
+    box-shadow:inset 0 -10px 14px rgba(0,0,0,0.15);
+  }
+  .basket-rim{position:absolute; bottom:106px; left:50%; transform:translateX(-50%); width:210px; height:24px; background:var(--basket-dark); border-radius:50%;}
+  .basket-apples{position:absolute; bottom:100px; left:50%; transform:translateX(-50%); width:190px; height:44px;}
+  .basket-apples .ba{position:absolute; width:28px; height:26px; border-radius:50%; background:radial-gradient(circle at 35% 30%, var(--apple-shine), var(--apple-red)); box-shadow:0 3px 5px rgba(0,0,0,0.2); opacity:0; transform:scale(0.4); transition:all .35s cubic-bezier(.34,1.56,.64,1);}
+  .basket-apples .ba.show{opacity:1; transform:scale(1);}
+  .b1{left:12px; bottom:6px;} .b2{left:46px; bottom:18px;} .b3{left:82px; bottom:2px;}
+  .b4{left:116px; bottom:16px;} .b5{left:150px; bottom:0px;} .b6{left:66px; bottom:26px;}
+  .b7{left:100px; bottom:28px;} .b8{left:30px; bottom:20px;}
+
+  .task-card{
+    background:var(--cream); border-radius:26px; box-shadow:var(--shadow);
+    padding:26px 26px; max-width:620px; margin:0 auto 40px;
+  }
+  .task-card h3{margin:0 0 16px; color:var(--bark-dark); display:flex; align-items:center; gap:8px;}
+  .todo-item{
+    display:flex; align-items:center; gap:12px; padding:9px 0;
+    border-bottom:1px dashed #E7D9C3; font-weight:600; color:#4A3B2C;
+  }
+  .todo-item:last-child{border-bottom:none;}
+  .todo-item input{
+    appearance:none; width:24px; height:24px; border-radius:50%;
+    border:2.5px solid var(--apple-red); cursor:pointer; flex-shrink:0;
+    display:grid; place-content:center;
+  }
+  .todo-item input:checked{background:var(--apple-red);}
+  .todo-item input:checked::after{content:"✓"; color:#fff; font-size:14px; font-weight:900;}
+  .todo-item span.done{text-decoration:line-through; opacity:0.5;}
+  .add-todo{display:flex; gap:8px; margin-top:14px;}
+  .add-todo input[type=text]{
+    flex:1; border:2px solid #EADFC9; border-radius:14px; padding:9px 12px;
+    font-family:'Quicksand'; font-weight:600; outline:none;
+  }
+  .add-todo input[type=text]:focus{border-color:var(--apple-red);}
+  .add-todo button{border:none; background:var(--leaf-dark); color:#fff; border-radius:14px; padding:0 16px; font-weight:700; cursor:pointer;}
+
+  .weather-card{background:var(--cream); border-radius:26px; box-shadow:var(--shadow); padding:26px; max-width:620px; margin:0 auto 40px;}
+  .weather-now{display:flex; align-items:center; gap:16px; margin-bottom:10px; position:relative;}
+  .weather-icon{font-size:2.8rem;}
+  .weather-temp{font-family:'Baloo 2'; font-size:2rem; color:var(--bark-dark);}
+  .weather-word{font-weight:700; color:#5A4A38;}
+  .mini-speak{
+    margin-left:auto; width:38px; height:38px; border-radius:50%; border:none;
+    background:#fff; box-shadow:var(--shadow); cursor:pointer; font-size:1.05rem;
+  }
+  .weather-tip{font-weight:700; color:var(--leaf-dark); margin-bottom:6px; font-size:0.95rem;}
+  .weather-status{color:#8A7457; font-size:0.82rem; margin-bottom:12px; min-height:1.1rem;}
+  .weather-toggle{display:flex; gap:8px;}
+  .weather-toggle button{
+    flex:1; border:2px solid #EADFC9; background:#fff; border-radius:14px;
+    padding:10px 6px; font-family:'Quicksand'; font-weight:700; cursor:pointer;
+    font-size:0.9rem; color:#5A4A38;
+  }
+  .weather-toggle button.active{border-color:var(--apple-red); background:#FFF0EE; color:var(--apple-red);}
+
+  .streak-week{display:flex; gap:8px; justify-content:center; margin-top:14px;}
+  .streak-day{
+    width:30px; height:30px; border-radius:9px; background:#EFE3CC;
+    display:grid; place-content:center; font-size:0.9rem;
+  }
+  .streak-day.lit{background:var(--leaf-light);}
+
+  .nav-cta{display:flex; gap:14px; justify-content:center; flex-wrap:wrap;}
+
+  @media (max-width:600px){
+    .thero-content h1{font-size:1.9rem;}
+    .thero-content p{font-size:0.95rem;}
+    main{padding:26px 5% 70px;}
+    .basket-wrap{transform:scale(0.82); margin:-18px 0;}
+    .top-stats{flex-direction:column;}
+    .stat-card{min-width:0; padding:18px 20px;}
+    .task-card, .weather-card{padding:20px 18px; border-radius:22px;}
+    .weather-toggle{flex-wrap:wrap;}
+    .weather-toggle button{min-width:80px;}
+    .add-todo{flex-wrap:wrap;}
+    .add-todo input[type=text]{min-width:0;}
+    .nav-cta{flex-direction:column; align-items:stretch;}
+    .nav-cta .cta{justify-content:center; text-align:center;}
+    .badge-grid{grid-template-columns:repeat(auto-fill, minmax(110px,1fr)); gap:10px;}
+  }
+
+  @media (max-width:360px){
+    .thero-content h1{font-size:1.6rem;}
+    .basket-wrap{transform:scale(0.7); margin:-30px 0;}
+    .stat-card .big{font-size:2.1rem;}
+    .weather-icon{font-size:2.2rem;}
+    .weather-temp{font-size:1.6rem;}
+    .weather-now{flex-wrap:wrap;}
+    .mini-speak{margin-left:0;}
+  }
+</style>
+</head>
+<body>
+
+<section class="section" id="thero">
+  <div class="sun"></div>
+  <div class="cloud cloud1"></div>
+
+  <nav class="nav-bar">
+    <a href="index.html" class="logo"><span class="logo-dot"></span> Pip's Orchard</a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="letters.html">Letters &amp; Numbers</a>
+      <a href="emotions.html">Emotions</a>
+      <a href="colors.html">Colors &amp; Shapes</a>
+      <a href="animals.html">Animals</a>
+      <a href="days.html">Days &amp; Months</a>
+      <a href="clock.html">Clock</a>
+      <a href="tracker.html" class="active">My Tracker</a>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>
+  </nav>
+
+  <div class="thero-content">
+    <span class="eyebrow">MY PROGRESS 🧺</span>
+    <h1>My Tracker</h1>
+    <p>Every task you finish fills the basket a little more!</p>
+    <p class="ua-line">Кожна виконана справа трохи наповнює кошик!</p>
+  </div>
+</section>
+
+<main>
+  <div class="top-stats">
+    <div class="stat-card">
+      <div class="big" id="todayCount">0</div>
+      <div class="label">tasks done today</div>
+    </div>
+    <div class="stat-card streak">
+      <div class="big" id="streakCount">0 🔥</div>
+      <div class="label">day streak</div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="basket-wrap">
+      <div class="basket-apples" id="basketApples">
+        <div class="ba b1"></div><div class="ba b2"></div><div class="ba b3"></div>
+        <div class="ba b4"></div><div class="ba b5"></div><div class="ba b6"></div>
+        <div class="ba b7"></div><div class="ba b8"></div>
+      </div>
+      <div class="basket-rim"></div>
+      <div class="basket"></div>
+    </div>
+    <div class="mascot-block">
+      <div class="pip-wrap"><div class="pip">
+        <div class="pip-crown"></div><div class="pip-leaf"></div><div class="pip-stem"></div>
+        <div class="pip-body"></div>
+        <div class="pip-eye l"></div><div class="pip-eye r"></div>
+        <div class="pip-cheek l"></div><div class="pip-cheek r"></div>
+        <div class="pip-mouth"></div>
+        <div class="pip-arm l" style="animation:none; transform:rotate(-40deg);"></div><div class="pip-arm r"></div>
+      </div></div>
+      <div class="speech" id="pipMsg">Let's see today's tasks!</div>
+    </div>
+  </div>
+
+  <div class="task-card">
+    <h3>✅ Today's Tasks</h3>
+    <p class="ua-line" style="margin-bottom:10px;">Завдання на сьогодні</p>
+    <div id="todoList"></div>
+    <div class="add-todo">
+      <input type="text" placeholder="Add a new task... / Нова справа..." id="newTodoText">
+      <button id="addTodoBtn">Add</button>
+    </div>
+  </div>
+
+  <div class="task-card">
+    <h3>🏅 My Badges</h3>
+    <p class="ua-line" style="margin-bottom:10px;">Мої нагороди</p>
+    <div class="badge-grid" id="badgeGrid"></div>
+  </div>
+
+  <div class="weather-card">
+    <h3 style="margin:0 0 6px; color:var(--bark-dark);">☀️ Today's Weather</h3>
+    <p class="ua-line" style="margin-bottom:10px;">Погода сьогодні</p>
+    <div class="weather-now">
+      <div class="weather-icon" id="wIcon">☀️</div>
+      <div>
+        <div class="weather-temp" id="wTemp">24°C</div>
+        <div class="weather-word" id="wWord">Sunny</div>
+      </div>
+      <button class="mini-speak" id="wSpeak" aria-label="Hear weather">🔊</button>
+    </div>
+    <div class="weather-tip" id="wTip">Tap "Use my location" for real weather!</div>
+    <div class="weather-status" id="wStatus"></div>
+    <button class="cta secondary" id="wLocateBtn" style="margin-bottom:14px;">📍 Use my location</button>
+    <div class="weather-toggle">
+      <button id="wSunny">Sunny</button>
+      <button id="wRainy">Rainy</button>
+      <button id="wCloudy">Cloudy</button>
+    </div>
+  </div>
+
+  <div class="nav-cta">
+    <a class="cta" href="index.html">← Back home</a>
+    <a class="cta secondary" href="letters.html">Play Letters &amp; Numbers →</a>
+  </div>
+</main>
+
+<script>
+  pipCheckDailyReset();
+  let todos = pipLoadTodos();
+
+  function renderTodos(){
+    const list = document.getElementById('todoList');
+    list.innerHTML = '';
+    todos.forEach((t, i)=>{
+      const label = document.createElement('label');
+      label.className = 'todo-item';
+      label.innerHTML = `<input type="checkbox" ${t.done?'checked':''}><span class="${t.done?'done':''}">${t.text}</span>`;
+      label.querySelector('input').addEventListener('change', (e)=> toggleTodo(i, e.target.checked));
+      list.appendChild(label);
+    });
+  }
+
+  function updateStats(){
+    const doneCount = pipDoneCount(todos);
+    document.getElementById('todayCount').textContent = doneCount;
+    document.getElementById('streakCount').textContent = pipGetStreak() + ' 🔥';
+
+    const apples = document.querySelectorAll('#basketApples .ba');
+    apples.forEach((a,i)=>{
+      a.classList.toggle('show', i < doneCount);
+    });
+
+    const msgs = [
+      "Let's see today's tasks!",
+      "Nice! One apple in the basket! 🍏",
+      "Great job, keep going! 🍎🍎",
+      "You're on fire today! 🔥🍎",
+      "Wow, basket's getting full! 🧺",
+      "Amazing! Almost every task done! 🌟",
+      "Superstar day! 🏆"
+    ];
+    document.getElementById('pipMsg').textContent = msgs[Math.min(doneCount, msgs.length-1)];
+  }
+
+  function renderBadges(){
+    const grid = document.getElementById('badgeGrid');
+    grid.innerHTML = '';
+    pipGetAchievements().forEach(a=>{
+      const card = document.createElement('div');
+      card.className = 'badge-card' + (a.unlocked ? ' unlocked' : '');
+      card.innerHTML = `
+        <div class="b-icon">${a.unlocked ? a.icon : '🔒'}</div>
+        <div class="b-title">${a.title}</div>
+        <div class="b-desc">${a.desc}</div>
+        <div class="b-progress">${a.progress}</div>`;
+      grid.appendChild(card);
+    });
+  }
+
+  function toggleTodo(index, isChecked){
+    todos[index].done = isChecked;
+    pipSaveTodos(todos);
+    if(isChecked){
+      pipBumpStreak();
+      pipRecordTaskDone();
+    }
+    pipRecordBasketState(pipDoneCount(todos), todos.length);
+    renderTodos();
+    updateStats();
+    renderBadges();
+    pipAnnounceNewBadges();
+  }
+
+  document.getElementById('addTodoBtn').addEventListener('click', ()=>{
+    const input = document.getElementById('newTodoText');
+    const text = input.value.trim();
+    if(!text) return;
+    todos.push({ text, done:false });
+    pipSaveTodos(todos);
+    input.value = '';
+    renderTodos();
+    updateStats();
+  });
+  document.getElementById('newTodoText').addEventListener('keydown', (e)=>{
+    if(e.key === 'Enter') document.getElementById('addTodoBtn').click();
+  });
+
+  renderTodos();
+  updateStats();
+  renderBadges();
+  pipApplyMood();
+
+  // ---------- Weather ----------
+  function speak(text){
+    if(!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'en-US'; u.rate = 0.85; u.pitch = 1.05;
+    window.speechSynthesis.speak(u);
+  }
+
+  const WEATHER_TIPS = {
+    Sunny:  "Wear a hat and sunglasses! 🕶️",
+    Rainy:  "Grab your umbrella! ☂️",
+    Cloudy: "Maybe bring a light jacket. 🧥",
+    Snowy:  "Wear a warm coat and mittens! 🧣",
+    Stormy: "Best stay inside today! 🏠",
+    Foggy:  "Stay close, it's foggy outside! 🌫️"
+  };
+
+  function weatherCodeToInfo(code, tempC){
+    let icon='☁️', word='Cloudy';
+    if(code === 0) { icon='☀️'; word='Sunny'; }
+    else if(code >=1 && code <=3){ icon='⛅'; word='Cloudy'; }
+    else if(code===45||code===48){ icon='🌫️'; word='Foggy'; }
+    else if((code>=51&&code<=67)||(code>=80&&code<=82)){ icon='🌧️'; word='Rainy'; }
+    else if(code>=71&&code<=77){ icon='❄️'; word='Snowy'; }
+    else if(code>=95){ icon='⛈️'; word='Stormy'; }
+    return { icon, temp: Math.round(tempC)+'°C', word };
+  }
+
+  function applyWeather(icon, temp, word, opts){
+    opts = opts || {};
+    document.getElementById('wIcon').textContent = icon;
+    document.getElementById('wTemp').textContent = temp;
+    document.getElementById('wWord').textContent = word;
+    document.querySelectorAll('.weather-toggle button').forEach(b=> b.classList.remove('active'));
+    const btn = document.getElementById('w'+word);
+    if(btn) btn.classList.add('active');
+    document.getElementById('wTip').textContent = WEATHER_TIPS[word] || "Have a great day! 🌤️";
+    pipSaveWeather(icon, temp, word);
+    if(!opts.silent){
+      speak(`It's ${word.toLowerCase()} today. ${WEATHER_TIPS[word] ? WEATHER_TIPS[word].replace(/[^\w\s!]/g,'') : ''}`);
+    }
+  }
+
+  document.getElementById('wSunny').addEventListener('click', ()=> applyWeather('☀️','24°C','Sunny'));
+  document.getElementById('wRainy').addEventListener('click', ()=> applyWeather('🌧️','16°C','Rainy'));
+  document.getElementById('wCloudy').addEventListener('click', ()=> applyWeather('☁️','19°C','Cloudy'));
+  document.getElementById('wSpeak').addEventListener('click', ()=>{
+    const word = document.getElementById('wWord').textContent;
+    applyWeather(document.getElementById('wIcon').textContent, document.getElementById('wTemp').textContent, word);
+  });
+
+  document.getElementById('wLocateBtn').addEventListener('click', ()=>{
+    const status = document.getElementById('wStatus');
+    if(!('geolocation' in navigator)){
+      status.textContent = "Location isn't available on this device.";
+      return;
+    }
+    status.textContent = "Finding your weather... 🌍";
+    navigator.geolocation.getCurrentPosition(
+      async (pos)=>{
+        try{
+          const { latitude, longitude } = pos.coords;
+          const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weather_code`;
+          const res = await fetch(url);
+          const data = await res.json();
+          const code = data.current.weather_code;
+          const tempC = data.current.temperature_2m;
+          const info = weatherCodeToInfo(code, tempC);
+          applyWeather(info.icon, info.temp, info.word);
+          status.textContent = "Live weather near you ✅";
+        }catch(err){
+          status.textContent = "Couldn't fetch live weather — pick one below instead.";
+        }
+      },
+      ()=>{ status.textContent = "Location off — pick your weather below instead."; },
+      { timeout: 8000 }
+    );
+  });
+
+  (function initWeather(){
+    const w = pipLoadWeather();
+    applyWeather(w.icon, w.temp, w.word, { silent:true });
+  })();
+
+  pipInitChrome();
+</script>
+
+<footer class="site-footer">
+  <div class="footer-inner"><span class="footer-pip">🍎</span> Pip's Orchard — Learn English · <a href="parents.html">Для батьків</a></div>
+</footer>
+<button class="to-top-btn" id="toTopBtn" aria-label="Back to top">↑</button>
+
+
+</body>
+</html>

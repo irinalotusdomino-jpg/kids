@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#8FD9EA">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Pip's Orchard">
+<title>Emotions &amp; Greetings — Pip's Orchard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="app.js"></script>
+<style>
+  #ehero{
+    background:linear-gradient(180deg,var(--sky-top) 0%, var(--sky-bottom) 78%);
+    padding-bottom:24px;
+  }
+  .ehero-content{position:relative; z-index:4; text-align:center; padding:18px 6% 6px;}
+  .ehero-content h1{font-size:2.3rem; margin:8px 0 6px; color:var(--bark-dark);}
+  .ehero-content p{margin:0; color:#4A3B2C; font-size:1.05rem;}
+
+  .subnav{
+    position:sticky; top:78px; z-index:20;
+    display:flex; gap:10px; justify-content:center; flex-wrap:wrap;
+    background:rgba(255,248,234,0.92); backdrop-filter:blur(6px);
+    padding:12px 5%; box-shadow:0 4px 14px rgba(58,46,35,0.08);
+  }
+  .subnav a{
+    text-decoration:none; font-weight:700; font-size:0.85rem; color:var(--bark-dark);
+    background:#fff; padding:8px 16px; border-radius:20px; box-shadow:var(--shadow);
+    white-space:nowrap;
+  }
+
+  main{max-width:1100px; margin:0 auto; padding:36px 6% 80px;}
+  .section-head{text-align:center; max-width:600px; margin:0 auto 28px;}
+  .section-head h2{font-size:1.9rem; color:var(--bark-dark); margin:8px 0 6px;}
+  .section-head p{color:#5A4A38; margin:0;}
+  section.block{scroll-margin-top:140px; margin-bottom:80px;}
+
+  /* ---------- Greeting flip cards ---------- */
+  .greet-grid{
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(160px,1fr));
+    gap:16px;
+  }
+  .greet-card{perspective:900px; height:130px; cursor:pointer;}
+  .greet-inner{
+    position:relative; width:100%; height:100%;
+    transform-style:preserve-3d; transition:transform 0.5s cubic-bezier(.4,.2,.2,1);
+    border-radius:20px; box-shadow:var(--shadow);
+  }
+  .greet-card.flipped .greet-inner{transform:rotateY(180deg);}
+  .greet-face{
+    position:absolute; inset:0; backface-visibility:hidden;
+    border-radius:20px; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:10px;
+  }
+  .greet-front{background:linear-gradient(160deg,#fff,var(--cream)); color:var(--bark-dark);}
+  .greet-front .emoji{font-size:1.9rem; margin-bottom:6px;}
+  .greet-front .phrase{font-family:'Baloo 2'; font-weight:700; font-size:1rem;}
+  .greet-back{background:var(--apple-red); color:#fff; transform:rotateY(180deg);}
+  .greet-back .pip-says{font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em; opacity:0.85;}
+  .greet-back .reply{font-family:'Baloo 2'; font-weight:700; font-size:1.05rem; margin-top:4px;}
+  .greet-speak{
+    position:absolute; top:6px; right:6px; width:26px; height:26px; border-radius:50%;
+    background:rgba(255,255,255,0.85); border:none; display:grid; place-content:center;
+    font-size:0.8rem; cursor:pointer;
+  }
+
+  /* ---------- Emotion faces ---------- */
+  .emo-grid{
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(120px,1fr));
+    gap:18px;
+  }
+  .emo-card{text-align:center;}
+  .emo-face-wrap{
+    background:var(--cream); border-radius:20px; padding:18px 10px 14px;
+    box-shadow:var(--shadow); position:relative;
+  }
+  .emo-pip{position:relative; width:78px; height:78px; margin:0 auto 8px;}
+  .emo-body{
+    position:absolute; inset:0; border-radius:50%;
+    background:radial-gradient(circle at 32% 28%, #FF9E93, var(--apple-red));
+  }
+  .emo-eye{position:absolute; top:30px; width:9px; height:11px; background:var(--ink); border-radius:50%; transition:all .2s ease;}
+  .emo-eye.l{left:19px;} .emo-eye.r{left:50px;}
+  .emo-brow{position:absolute; top:20px; width:14px; height:3px; background:var(--ink); border-radius:3px; opacity:0; transition:all .2s ease;}
+  .emo-brow.l{left:16px;} .emo-brow.r{left:48px;}
+  .emo-mouth{
+    position:absolute; top:46px; left:29px; width:20px; height:9px;
+    border:3px solid var(--ink); border-top:none; border-radius:0 0 18px 18px;
+    background:transparent; transition:all .2s ease;
+  }
+  .emo-label{font-family:'Baloo 2'; font-weight:700; color:var(--bark-dark); font-size:0.95rem;}
+  .emo-speak{
+    margin-top:6px; border:none; background:var(--blue); color:#fff; border-radius:14px;
+    padding:5px 12px; font-size:0.78rem; font-weight:700; cursor:pointer;
+  }
+
+  /* mood modifiers */
+  .emo-pip.sadmood .emo-mouth{border:none; border-top:3px solid var(--ink); border-radius:18px 18px 0 0; top:50px;}
+  .emo-pip.sadmood .emo-brow{opacity:1;}
+  .emo-pip.sadmood .emo-brow.l{transform:rotate(18deg) translate(2px,-2px);}
+  .emo-pip.sadmood .emo-brow.r{transform:rotate(-18deg) translate(-2px,-2px);}
+
+  .emo-pip.angry .emo-brow{opacity:1;}
+  .emo-pip.angry .emo-brow.l{transform:rotate(-22deg) translate(3px,3px);}
+  .emo-pip.angry .emo-brow.r{transform:rotate(22deg) translate(-3px,3px);}
+  .emo-pip.angry .emo-mouth{height:4px; border-radius:4px; top:48px;}
+  .emo-pip.angry .emo-body{filter:saturate(1.3) brightness(0.95);}
+
+  .emo-pip.surprised .emo-eye{transform:scale(1.35);}
+  .emo-pip.surprised .emo-mouth{width:16px; height:16px; border-radius:50%; border:3px solid var(--ink); top:42px; left:31px;}
+  .emo-pip.surprised .emo-brow{opacity:1; transform:translateY(-4px);}
+
+  .emo-pip.scared .emo-eye{transform:scale(1.4);}
+  .emo-pip.scared .emo-brow{opacity:1; transform:translateY(-5px);}
+  .emo-pip.scared .emo-mouth{width:10px; height:6px; border-radius:50%; border:2.5px solid var(--ink); top:47px; left:34px;}
+  .emo-pip.scared .emo-body{filter:brightness(1.08) saturate(0.75);}
+
+  .emo-pip.sleepy .emo-eye{height:2px; top:35px; border-radius:2px;}
+  .emo-pip.sleepy .emo-mouth{width:10px; height:3px; border:none; border-top:3px solid var(--ink); border-radius:3px; top:48px; left:34px;}
+  .emo-pip.sleepy::after{
+    content:"z z"; position:absolute; top:-6px; right:2px; font-size:11px; font-weight:700;
+    color:var(--bark-dark); animation:sleepyFloat 2.2s ease-in-out infinite;
+  }
+  @keyframes sleepyFloat{0%,100%{opacity:0.4; transform:translateY(0);}50%{opacity:1; transform:translateY(-5px);}}
+
+  .emo-pip.excited .emo-mouth{width:26px; height:14px; top:44px; left:26px; border-width:3.5px;}
+  .emo-pip.excited .emo-eye{transform:scale(1.15);}
+  .emo-pip.excited::before, .emo-pip.excited::after{
+    content:"✨"; position:absolute; font-size:14px; animation:sparkle 1.2s ease-in-out infinite;
+  }
+  .emo-pip.excited::before{top:-8px; left:-10px;}
+  .emo-pip.excited::after{top:-8px; right:-10px; animation-delay:.3s;}
+  @keyframes sparkle{0%,100%{opacity:0.3; transform:scale(0.8);}50%{opacity:1; transform:scale(1.15);}}
+
+  /* ---------- Quiz ---------- */
+  .fq-wrap{display:flex; gap:30px; justify-content:center; align-items:center; flex-wrap:wrap;}
+  .fq-stage{background:var(--cream); border-radius:26px; box-shadow:var(--shadow); padding:26px; text-align:center;}
+  .fq-scenario{font-weight:700; color:#5A4A38; margin-bottom:14px; min-height:1.4rem; max-width:220px;}
+  .fq-card{background:var(--cream); border-radius:26px; box-shadow:var(--shadow); padding:26px; text-align:center; max-width:340px;}
+  .fq-score{font-family:'Baloo 2'; font-weight:700; color:var(--apple-red); margin-bottom:10px;}
+  .fq-options{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:6px;}
+  .fq-btn{
+    border:none; border-radius:14px; padding:12px 8px; font-family:'Quicksand'; font-weight:700;
+    background:#fff; color:var(--bark-dark); box-shadow:var(--shadow); cursor:pointer; font-size:0.9rem;
+  }
+  .fq-btn.correct{background:var(--leaf-light); color:#fff; animation:pop .3s ease;}
+  .fq-btn.wrong{background:#F2A39C; animation:shake .35s ease;}
+  @keyframes pop{0%{transform:scale(1);}50%{transform:scale(1.1);}100%{transform:scale(1);}}
+  @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-7px);}75%{transform:translateX(7px);}}
+  .fq-feedback{margin-top:12px; font-weight:700; min-height:1.4rem; color:var(--bark-dark);}
+
+  /* ---------- Practice ---------- */
+  .practice-card{
+    background:var(--cream); border-radius:26px; box-shadow:var(--shadow);
+    padding:30px; text-align:center; max-width:420px; margin:0 auto;
+  }
+  .practice-phrase{font-family:'Baloo 2'; font-size:1.5rem; color:var(--bark-dark); margin-bottom:16px; min-height:2rem;}
+  .practice-btn{
+    border:none; border-radius:24px; padding:14px 26px; background:var(--leaf-dark); color:#fff;
+    font-family:'Baloo 2'; font-weight:700; font-size:1rem; cursor:pointer; box-shadow:0 8px 0 #2E6E3D, var(--shadow);
+  }
+  .practice-btn:active{transform:translateY(6px); box-shadow:0 2px 0 #2E6E3D;}
+
+  .back-cta{display:flex; justify-content:center; margin-top:10px;}
+
+  @media (max-width:600px){
+    .ehero-content h1{font-size:1.9rem;}
+    .greet-grid{grid-template-columns:repeat(auto-fill, minmax(130px,1fr)); gap:12px;}
+    .greet-card{height:112px;}
+    .emo-grid{grid-template-columns:repeat(auto-fill, minmax(96px,1fr)); gap:12px;}
+    .emo-pip{width:64px; height:64px;}
+    .emo-eye{top:24px;} .emo-eye.l{left:15px;} .emo-eye.r{left:41px;}
+    .fq-options{grid-template-columns:1fr 1fr;}
+    .subnav{top:64px;}
+    main{padding:26px 5% 70px;}
+  }
+</style>
+</head>
+<body>
+
+<section class="section" id="ehero">
+  <div class="sun"></div>
+  <div class="cloud cloud1"></div>
+  <div class="cloud cloud2"></div>
+
+  <nav class="nav-bar">
+    <a href="index.html" class="logo"><span class="logo-dot"></span> Pip's Orchard</a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="letters.html">Letters &amp; Numbers</a>
+      <a href="emotions.html" class="active">Emotions</a>
+      <a href="colors.html">Colors &amp; Shapes</a>
+      <a href="animals.html">Animals</a>
+      <a href="days.html">Days &amp; Months</a>
+      <a href="clock.html">Clock</a>
+      <a href="tracker.html">My Tracker</a>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>
+  </nav>
+
+  <div class="ehero-content">
+    <span class="eyebrow">HOW DO YOU FEEL? 😊</span>
+    <h1>Emotions &amp; Greetings</h1>
+    <p>Meet Pip's feelings, learn friendly words, and say hello the English way!</p>
+    <p class="ua-line">Пізнай почуття Піпа, вивчи дружні слова та привітайся по-англійськи!</p>
+  </div>
+  <div class="mascot-block" style="justify-content:center; margin-top:6px;">
+    <div class="pip-wrap"><div class="pip">
+      <div class="pip-crown"></div><div class="pip-leaf"></div><div class="pip-stem"></div>
+      <div class="pip-body"></div>
+      <div class="pip-eye l"></div><div class="pip-eye r"></div>
+      <div class="pip-cheek l"></div><div class="pip-cheek r"></div>
+      <div class="pip-mouth"></div>
+      <div class="pip-arm l"></div><div class="pip-arm r"></div>
+    </div></div>
+    <div class="speech">Hello! How are you today? 👋</div>
+  </div>
+</section>
+
+<div class="subnav">
+  <a href="#greetings">👋 Greetings</a>
+  <a href="#feelings">😊 Feelings</a>
+  <a href="#quiz">🎧 Quiz</a>
+  <a href="#practice">🗣️ Practice</a>
+</div>
+
+<main>
+  <section class="block" id="greetings">
+    <div class="section-head">
+      <span class="eyebrow">SAY HELLO</span>
+      <h2>Greetings</h2>
+      <p>Flip a card to see how Pip replies!</p>
+      <p class="ua-line">Натисни на картку, щоб побачити, як відповідає Піп!</p>
+    </div>
+    <div class="greet-grid" id="greetGrid"></div>
+  </section>
+
+  <section class="block" id="feelings">
+    <div class="section-head">
+      <span class="eyebrow">HOW PIP FEELS</span>
+      <h2>Feelings</h2>
+      <p>Every face tells a story. Tap 🔊 to hear the word.</p>
+      <p class="ua-line">Кожне обличчя розказує історію. Натисни 🔊, щоб почути слово.</p>
+    </div>
+    <div class="emo-grid" id="emoGrid"></div>
+  </section>
+
+  <section class="block" id="quiz">
+    <div class="section-head">
+      <span class="eyebrow">GAME</span>
+      <h2>Feelings Quiz</h2>
+      <p>Look at Pip (or read the story) and pick the right feeling!</p>
+      <p class="ua-line">Подивись на Піпа (або прочитай історію) і обери правильне почуття!</p>
+    </div>
+    <div class="fq-wrap">
+      <div class="fq-stage">
+        <div class="emo-pip" id="quizFace">
+          <div class="emo-body"></div>
+          <div class="emo-eye l"></div><div class="emo-eye r"></div>
+          <div class="emo-brow l"></div><div class="emo-brow r"></div>
+          <div class="emo-mouth"></div>
+        </div>
+        <div class="fq-scenario" id="fqScenario"></div>
+      </div>
+      <div class="fq-card">
+        <div class="fq-score" id="fqScore">🍎 Score: 0</div>
+        <div>How does Pip feel?</div>
+        <div class="fq-options" id="fqOptions"></div>
+        <div class="fq-feedback" id="fqFeedback"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="practice">
+    <div class="section-head">
+      <span class="eyebrow">SAY IT WITH ME</span>
+      <h2>Practice Time</h2>
+      <p>Tap the button, listen to Pip, then say it out loud together!</p>
+      <p class="ua-line">Натисни кнопку, послухай Піпа, а потім повтори вголос разом!</p>
+    </div>
+    <div class="practice-card">
+      <div class="practice-phrase" id="practicePhrase">Tap below to start!</div>
+      <button class="practice-btn" id="practiceBtn">🔊 Say a greeting!</button>
+    </div>
+  </section>
+
+  <div class="back-cta">
+    <a class="cta" href="letters.html">More games →</a>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner"><span class="footer-pip">🍎</span> Pip's Orchard — Learn English · <a href="parents.html">Для батьків</a></div>
+</footer>
+<button class="to-top-btn" id="toTopBtn" aria-label="Back to top">↑</button>
+
+<script>
+  function speak(text){
+    if(!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'en-US'; u.rate = 0.85; u.pitch = 1.05;
+    window.speechSynthesis.speak(u);
+  }
+
+  // ---------- Greetings ----------
+  const greetings = [
+    ['Hello','👋','Hi there!'],
+    ['Good morning','☀️','Rise and shine!'],
+    ['Good night','🌙','Sweet dreams!'],
+    ['Goodbye','👋','See you soon!'],
+    ['Thank you','🙏','You are welcome!'],
+    ['Please','🙏','Of course!'],
+    ['Sorry','😔','It is okay!'],
+    ["You're welcome",'😊','Anytime!'],
+    ['See you soon','🤗','Can not wait!'],
+    ['Nice to meet you','🤝','Nice to meet you too!']
+  ];
+
+  const greetGrid = document.getElementById('greetGrid');
+  greetings.forEach(([phrase, emoji, reply])=>{
+    const card = document.createElement('div');
+    card.className = 'greet-card';
+    card.innerHTML = `
+      <div class="greet-inner">
+        <div class="greet-face greet-front">
+          <div class="emoji">${emoji}</div>
+          <div class="phrase">${phrase}</div>
+          <button class="greet-speak" aria-label="Hear it">🔊</button>
+        </div>
+        <div class="greet-face greet-back">
+          <div class="pip-says">Pip says</div>
+          <div class="reply">${reply}</div>
+        </div>
+      </div>`;
+    card.addEventListener('click', ()=>{
+      card.classList.toggle('flipped');
+      speak(card.classList.contains('flipped') ? reply : phrase);
+      if(card.classList.contains('flipped')){
+        pipMarkGreetingSeen(phrase);
+        pipAnnounceNewBadges();
+      }
+    });
+    card.querySelector('.greet-speak').addEventListener('click', (e)=>{
+      e.stopPropagation();
+      speak(card.classList.contains('flipped') ? reply : phrase);
+    });
+    greetGrid.appendChild(card);
+  });
+
+  // ---------- Feelings grid ----------
+  const emotions = ['happy','sadmood','angry','surprised','scared','sleepy','excited'];
+  const emotionLabels = {
+    happy:'Happy', sadmood:'Sad', angry:'Angry', surprised:'Surprised',
+    scared:'Scared', sleepy:'Sleepy', excited:'Excited'
+  };
+
+  function buildEmoFace(cls){
+    const el = document.createElement('div');
+    el.className = 'emo-pip ' + cls;
+    el.innerHTML = `
+      <div class="emo-body"></div>
+      <div class="emo-eye l"></div><div class="emo-eye r"></div>
+      <div class="emo-brow l"></div><div class="emo-brow r"></div>
+      <div class="emo-mouth"></div>`;
+    return el;
+  }
+
+  const emoGrid = document.getElementById('emoGrid');
+  emotions.forEach(cls=>{
+    const card = document.createElement('div');
+    card.className = 'emo-card';
+    const wrap = document.createElement('div');
+    wrap.className = 'emo-face-wrap';
+    wrap.appendChild(buildEmoFace(cls));
+    const label = document.createElement('div');
+    label.className = 'emo-label';
+    label.textContent = emotionLabels[cls];
+    const btn = document.createElement('button');
+    btn.className = 'emo-speak';
+    btn.textContent = '🔊 ' + emotionLabels[cls];
+    btn.addEventListener('click', ()=> speak(`I feel ${emotionLabels[cls].toLowerCase()}`));
+    card.appendChild(wrap);
+    card.appendChild(label);
+    card.appendChild(btn);
+    emoGrid.appendChild(card);
+  });
+
+  // ---------- Feelings quiz ----------
+  const scenarios = [
+    ["It's raining and the picnic is cancelled.", 'sadmood'],
+    ['Pip found a giant ice cream!', 'excited'],
+    ['Someone took Pip\'s toy without asking.', 'angry'],
+    ['A big surprise party for Pip!', 'surprised'],
+    ["It's very late and Pip is in bed.", 'sleepy'],
+    ['A loud thunder just went BOOM!', 'scared'],
+    ['Pip is playing in the sunny garden.', 'happy']
+  ];
+
+  let fqScore = 0;
+  let fqAnswer = '';
+  let fqLocked = false;
+
+  function shuffle(arr){
+    const a = arr.slice();
+    for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+    return a;
+  }
+
+  let fqCurrentCls = null;
+
+  function applyFaceClass(el, cls){
+    emotions.forEach(c => el.classList.remove(c));
+    el.classList.add(cls);
+  }
+
+  function newFqRound(){
+    fqLocked = false;
+    document.getElementById('fqFeedback').textContent = '';
+    const quizFace = document.getElementById('quizFace');
+    const scenarioEl = document.getElementById('fqScenario');
+
+    const useScenario = Math.random() < 0.5;
+    let cls;
+    if(useScenario){
+      const [text, emoCls] = scenarios[Math.floor(Math.random()*scenarios.length)];
+      scenarioEl.textContent = text;
+      cls = emoCls;
+      applyFaceClass(quizFace, 'hiddenface');
+      quizFace.style.opacity = '0.15';
+    } else {
+      cls = emotions[Math.floor(Math.random()*emotions.length)];
+      applyFaceClass(quizFace, cls);
+      quizFace.style.opacity = '1';
+      scenarioEl.textContent = '';
+    }
+    fqCurrentCls = cls;
+    fqAnswer = emotionLabels[cls];
+
+    const wrongLabels = shuffle(Object.values(emotionLabels).filter(l => l !== fqAnswer)).slice(0,3);
+    const options = shuffle([fqAnswer, ...wrongLabels]);
+    const optWrap = document.getElementById('fqOptions');
+    optWrap.innerHTML = '';
+    options.forEach(opt=>{
+      const btn = document.createElement('button');
+      btn.className = 'fq-btn';
+      btn.textContent = opt;
+      btn.dataset.val = opt;
+      btn.addEventListener('click', ()=> handleFqPick(btn, opt));
+      optWrap.appendChild(btn);
+    });
+  }
+
+  function handleFqPick(btn, opt){
+    if(fqLocked) return;
+    const feedback = document.getElementById('fqFeedback');
+    if(opt === fqAnswer){
+      fqLocked = true;
+      btn.classList.add('correct');
+      fqScore++;
+      document.getElementById('fqScore').textContent = '🍎 Score: ' + fqScore;
+      feedback.textContent = `Yes! Pip feels ${fqAnswer.toLowerCase()}! 🎉`;
+      speak(`Correct! Pip feels ${fqAnswer.toLowerCase()}`);
+      pipUpdateBest('pipEmoBest', fqScore);
+      pipAnnounceNewBadges();
+      const quizFaceOk = document.getElementById('quizFace');
+      applyFaceClass(quizFaceOk, fqCurrentCls);
+      quizFaceOk.style.opacity = '1';
+      setTimeout(newFqRound, 1600);
+    } else {
+      fqLocked = true;
+      btn.classList.add('wrong');
+      const optWrap = document.getElementById('fqOptions');
+      const correctBtn = [...optWrap.children].find(b => b.dataset.val === fqAnswer);
+      if(correctBtn) correctBtn.classList.add('correct');
+      const quizFace = document.getElementById('quizFace');
+      applyFaceClass(quizFace, fqCurrentCls);
+      quizFace.style.opacity = '1';
+      feedback.textContent = `Not quite — Pip feels ${fqAnswer.toLowerCase()}!`;
+      speak(`Pip feels ${fqAnswer.toLowerCase()}`);
+      setTimeout(newFqRound, 1900);
+    }
+  }
+
+  newFqRound();
+
+  // ---------- Practice ----------
+  document.getElementById('practiceBtn').addEventListener('click', ()=>{
+    const [phrase] = greetings[Math.floor(Math.random()*greetings.length)];
+    document.getElementById('practicePhrase').textContent = phrase;
+    speak(phrase);
+  });
+
+  pipApplyMood();
+  pipInitChrome();
+</script>
+
+</body>
+</html>

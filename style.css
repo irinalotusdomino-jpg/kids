@@ -1,0 +1,346 @@
+/* ===================================================
+   Pip's Orchard — shared design tokens & components
+   Used by every page: index.html, letters.html, ...
+=================================================== */
+:root{
+  --sky-top:#5FD3F0;
+  --sky-bottom:#B8F3E1;
+  --sun:#FFC022;
+  --leaf-dark:#2E9E52;
+  --leaf-light:#4ECB6C;
+  --apple-red:#FF4B4B;
+  --apple-shine:#FFAE7A;
+  --bark:#8A5A38;
+  --bark-dark:#6E4527;
+  --cream:#FFF9EC;
+  --ink:#3A2E23;
+  --grass:#6BD46A;
+  --grass-dark:#4CBE55;
+  --basket:#C88A4C;
+  --basket-dark:#A16A32;
+  --sky2-top:#FFCE5C;
+  --sky2-bottom:#FFF3DA;
+  --blue:#33B6E8;
+  --purple:#9B6BF0;
+  --pink:#FF6FA5;
+  --teal:#22D6C0;
+  --rainbow: linear-gradient(90deg, var(--apple-red), var(--sun), var(--leaf-light), var(--blue), var(--purple), var(--pink));
+  --shadow: 0 10px 30px rgba(58,46,35,0.18);
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  font-family:'Quicksand',sans-serif;
+  color:var(--ink);
+  overflow-x:hidden;
+  background:var(--sky-bottom);
+}
+h1,h2,h3,.display{font-family:'Baloo 2',cursive;}
+
+.section{position:relative; width:100%; overflow:hidden;}
+.section::before{
+  content:""; position:absolute; inset:0; pointer-events:none; z-index:0;
+  background-image:
+    radial-gradient(circle, rgba(255,255,255,0.7) 2px, transparent 2.5px),
+    radial-gradient(circle, rgba(255,255,255,0.45) 1.5px, transparent 2px);
+  background-size:64px 64px, 38px 38px;
+  background-position:12px 18px, 40px 52px;
+}
+
+/* ---------- Sky atmosphere (sun + clouds) ---------- */
+.sun{
+  position:absolute; top:6%; right:8%;
+  width:110px;height:110px; border-radius:50%;
+  background:radial-gradient(circle at 35% 35%, #FFE49A, var(--sun));
+  box-shadow:0 0 60px 20px rgba(255,201,71,0.55);
+  animation:pulse 4s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.06);}}
+
+.cloud{position:absolute; background:#fff; border-radius:100px; opacity:0.85; filter:blur(0.3px);}
+.cloud::before,.cloud::after{content:""; position:absolute; background:#fff; border-radius:100px;}
+.cloud1{width:120px;height:44px; top:10%; left:6%; animation:drift 26s linear infinite;}
+.cloud1::before{width:60px;height:60px;top:-28px;left:14px;}
+.cloud1::after{width:50px;height:50px;top:-20px;left:60px;}
+.cloud2{width:90px;height:34px; top:20%; left:60%; animation:drift 34s linear infinite reverse;}
+.cloud2::before{width:46px;height:46px;top:-22px;left:10px;}
+.cloud2::after{width:38px;height:38px;top:-16px;left:46px;}
+@keyframes drift{from{transform:translateX(0);}to{transform:translateX(40px);}}
+
+/* ---------- Nav (fixed, translucent header) ---------- */
+body{ padding-top:78px; padding-bottom:56px; }
+
+.nav-bar{
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:18px 5%;
+  background:rgba(255,248,234,0.72);
+  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+  box-shadow:0 4px 20px rgba(58,46,35,0.08);
+  transition:box-shadow .25s ease;
+}
+.nav-bar.scrolled{box-shadow:0 6px 22px rgba(58,46,35,0.16);}
+.nav-bar::after{
+  content:""; position:absolute; left:0; right:0; bottom:0; height:4px;
+  background:var(--rainbow); opacity:0.85;
+}
+.logo{display:flex; align-items:center; gap:10px; font-size:1.4rem; font-weight:700; color:var(--bark-dark); text-decoration:none;}
+.logo-dot{width:14px;height:14px;background:var(--apple-red);border-radius:50%;box-shadow:0 0 0 4px rgba(232,72,62,0.18);}
+.nav-links{display:flex; gap:14px; font-weight:600; color:var(--bark-dark); font-size:0.9rem; flex-wrap:wrap; justify-content:flex-end;}
+.nav-links a{cursor:pointer; opacity:0.55; text-decoration:none; color:var(--bark-dark);}
+.nav-links a.active{opacity:1; border-bottom:3px solid var(--apple-red); padding-bottom:2px;}
+
+/* ---------- Fixed, translucent footer ---------- */
+.site-footer{
+  position:fixed; left:0; right:0; bottom:0; z-index:90;
+  background:rgba(255,248,234,0.72);
+  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+  box-shadow:0 -4px 20px rgba(58,46,35,0.08);
+  padding:11px 5%; text-align:center;
+}
+.footer-inner{
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  font-family:'Quicksand'; font-weight:700; font-size:0.82rem; color:var(--bark-dark);
+}
+.footer-inner .footer-pip{font-size:1rem;}
+.footer-inner a{color:var(--apple-red); text-decoration:none;}
+
+/* ---------- Back-to-top button ---------- */
+.to-top-btn{
+  position:fixed; right:18px; bottom:68px; z-index:95;
+  width:46px; height:46px; border-radius:50%; border:none; cursor:pointer;
+  background:var(--apple-red); color:#fff; font-size:1.25rem; font-weight:700;
+  box-shadow:0 8px 18px rgba(58,46,35,0.28);
+  opacity:0; transform:translateY(14px) scale(0.8); pointer-events:none;
+  transition:opacity .25s ease, transform .25s ease;
+}
+.to-top-btn.show{opacity:1; transform:translateY(0) scale(1); pointer-events:auto;}
+.to-top-btn:hover{transform:translateY(-3px) scale(1.06);}
+
+/* ---------- Mobile nav toggle ---------- */
+.nav-toggle{
+  display:none; width:40px; height:40px; border-radius:12px; border:none;
+  background:#fff; box-shadow:var(--shadow); font-size:1.2rem; cursor:pointer;
+  color:var(--bark-dark); align-items:center; justify-content:center;
+}
+
+@media (max-width:600px){
+  body{ padding-top:64px; padding-bottom:50px; }
+  .site-footer{padding:9px 5%;}
+  .footer-inner{font-size:0.72rem;}
+  .to-top-btn{right:14px; bottom:60px; width:40px; height:40px; font-size:1.05rem;}
+
+  .nav-toggle{display:flex;}
+  .nav-links{
+    display:flex; position:fixed; top:64px; left:0; right:0; z-index:99;
+    flex-direction:column; align-items:stretch; gap:0;
+    background:rgba(255,248,234,0.98); backdrop-filter:blur(10px);
+    box-shadow:0 10px 24px rgba(58,46,35,0.15);
+    max-height:0; overflow:hidden; transition:max-height .3s ease;
+    padding:0 5%;
+  }
+  .nav-links.open{max-height:320px; padding:8px 5% 14px;}
+  .nav-links a{
+    padding:12px 4px; border-bottom:1px solid rgba(122,90,56,0.12);
+    opacity:1; font-size:1rem;
+  }
+  .nav-links a.active{border-bottom:1px solid var(--apple-red);}
+}
+
+@media (max-width:360px){
+  .logo{font-size:1rem; gap:7px;}
+  .logo-dot{width:11px; height:11px;}
+  .footer-inner{font-size:0.66rem; gap:6px;}
+  .nav-bar{padding:14px 4%;}
+}
+
+/* ---------- Ukrainian translation lines (bilingual instructions) ---------- */
+.ua-line{
+  color:var(--apple-red) !important; font-weight:700 !important; margin:6px 0 0 !important; font-size:0.92em;
+}
+
+/* ---------- Buttons & labels ---------- */
+.eyebrow{
+  display:inline-block; background:#fff; color:var(--apple-red);
+  font-weight:700; font-size:0.8rem; letter-spacing:0.06em;
+  padding:6px 14px; border-radius:20px; box-shadow:var(--shadow);
+  margin-bottom:16px;
+}
+.cta{
+  display:inline-flex; align-items:center; gap:10px;
+  background:linear-gradient(135deg, var(--apple-red), #FF7A5C); color:#fff; font-family:'Baloo 2';
+  font-size:1.1rem; font-weight:700; border:none; text-decoration:none;
+  padding:14px 28px; border-radius:40px; cursor:pointer;
+  box-shadow:0 8px 0 #C83A3A, var(--shadow);
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+.cta:hover{transform:translateY(-3px) scale(1.03);}
+.cta:active{transform:translateY(6px) scale(1); box-shadow:0 2px 0 #C83A3A;}
+.cta.secondary{background:linear-gradient(135deg, var(--leaf-dark), var(--leaf-light)); box-shadow:0 8px 0 #256E38, var(--shadow);}
+.cta.secondary:active{box-shadow:0 2px 0 #256E38;}
+
+.scroll-hint{
+  position:absolute; bottom:22px; left:50%; transform:translateX(-50%);
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+  color:var(--bark-dark); font-weight:700; font-size:0.85rem;
+  z-index:5; cursor:pointer; user-select:none;
+}
+.scroll-hint .arrow{
+  width:14px;height:14px; border-right:3px solid var(--bark-dark); border-bottom:3px solid var(--bark-dark);
+  transform:rotate(45deg); animation:bob 1.6s ease-in-out infinite;
+}
+@keyframes bob{0%,100%{transform:rotate(45deg) translateY(0);}50%{transform:rotate(45deg) translateY(6px);}}
+
+/* ---------- Cards ---------- */
+.card{
+  background:var(--cream); border-radius:24px; box-shadow:var(--shadow);
+  padding:22px 24px; flex:1; min-width:min(280px, 100%);
+}
+.card h3{margin:0 0 14px; font-size:1.3rem; color:var(--bark-dark); display:flex; align-items:center; gap:8px;}
+
+/* ---------- Mascot: Pip ---------- */
+.pip{position:relative; width:86px; height:96px;}
+.pip-body{
+  position:absolute; bottom:0; left:50%; transform:translateX(-50%);
+  width:72px; height:78px; border-radius:50% 50% 46% 46% / 58% 58% 42% 42%;
+  background:radial-gradient(circle at 32% 28%, #FF9E93, var(--apple-red));
+}
+.pip-leaf{position:absolute; top:-14px; left:50%; transform:translateX(-50%) rotate(-15deg); width:26px; height:16px; background:var(--leaf-light); border-radius:0 100% 0 100%;}
+.pip-stem{position:absolute; top:-8px; left:50%; transform:translateX(-2px); width:5px; height:16px; background:var(--bark); border-radius:3px;}
+.pip-eye{position:absolute; top:30px; width:9px; height:11px; background:var(--ink); border-radius:50%;}
+.pip-eye.l{left:20px;} .pip-eye.r{left:44px;}
+.pip-cheek{position:absolute; top:44px; width:10px; height:7px; background:#FFB4A8; border-radius:50%; opacity:0.8;}
+.pip-cheek.l{left:10px;} .pip-cheek.r{left:52px;}
+.pip-mouth{position:absolute; top:46px; left:32px; width:16px; height:8px; border:3px solid var(--ink); border-top:none; border-radius:0 0 16px 16px;}
+.pip-arm{position:absolute; top:44px; width:22px; height:6px; background:var(--apple-red); border-radius:6px;}
+.pip-arm.l{left:-14px; transform-origin:right center; animation:wave 1.8s ease-in-out infinite;}
+.pip-arm.r{right:-14px; transform:rotate(20deg);}
+@keyframes wave{0%,100%{transform:rotate(0deg);}50%{transform:rotate(-30deg);}}
+.pip-wrap{animation:bounce 3s ease-in-out infinite;}
+@keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+
+.speech{
+  position:relative; background:#fff; border-radius:18px; padding:10px 16px;
+  font-family:'Baloo 2'; font-weight:600; font-size:0.95rem;
+  box-shadow:var(--shadow); max-width:190px; color:var(--bark-dark);
+}
+.speech::after{content:""; position:absolute; bottom:-10px; left:26px; border-width:10px 8px 0; border-style:solid; border-color:#fff transparent transparent;}
+.mascot-block{display:flex; align-items:flex-end; gap:12px;}
+
+/* ---------- Pip moods ---------- */
+.pip-crown{
+  display:none; position:absolute; top:-30px; left:50%; transform:translateX(-50%);
+  width:34px; height:26px; z-index:2;
+}
+.pip-crown::before{content:"👑"; position:absolute; left:50%; top:0; transform:translateX(-50%); font-size:26px; line-height:1;}
+.pip.crowned .pip-crown{display:block;}
+.pip.crowned .pip-leaf, .pip.crowned .pip-stem{opacity:0;}
+
+.pip.sad .pip-mouth{
+  border:3px solid var(--ink); border-bottom:none; border-top:3px solid var(--ink);
+  border-radius:16px 16px 0 0; top:52px;
+}
+.pip.sad .pip-cheek{opacity:0.2;}
+.pip.sad .pip-arm.l{animation:none !important; transform:rotate(14deg) !important;}
+.pip.sad .pip-arm.r{transform:rotate(-14deg);}
+.pip.sad ~ .speech, .mascot-block:has(.pip.sad) .speech{color:#8A7457;}
+
+/* Celebration jump, triggered briefly when a badge unlocks */
+@keyframes pip-celebrate{
+  0%{transform:translateY(0) rotate(0);}
+  20%{transform:translateY(-30px) rotate(-10deg);}
+  40%{transform:translateY(0) rotate(6deg);}
+  60%{transform:translateY(-18px) rotate(-6deg);}
+  80%{transform:translateY(0) rotate(3deg);}
+  100%{transform:translateY(0) rotate(0);}
+}
+.pip-wrap.celebrate{animation:pip-celebrate 0.9s ease;}
+
+/* ---------- Global responsive helpers ---------- */
+@media (max-width:600px){
+  .nav-bar{padding:16px 5%;}
+  .logo{font-size:1.15rem;}
+  .pip{width:64px; height:72px; transform:scale(0.85);}
+  .speech{font-size:0.85rem; max-width:150px; padding:8px 12px;}
+  .sun{width:70px;height:70px; top:4%; right:6%;}
+  .cloud1{width:80px;height:30px;} .cloud1::before{width:40px;height:40px;top:-18px;left:10px;} .cloud1::after{width:34px;height:34px;top:-14px;left:40px;}
+  .cloud2{display:none;}
+}
+
+/* ---------- Weather toggle overflow safety (applies on every page) ---------- */
+.weather-toggle{flex-wrap:wrap;}
+.weather-toggle button{min-width:0; flex:1 1 70px;}
+
+@media (pointer:coarse){
+  .weather-toggle button{padding:12px 6px; min-height:44px;}
+  .add-todo button{padding:0 18px; min-height:44px;}
+  .add-todo input[type=text]{min-height:44px;}
+  .todo-item input{width:26px; height:26px;}
+  .nav-links a, .scroll-hint{padding:4px 0;}
+  .to-top-btn{width:48px; height:48px;}
+  .cta{min-height:44px;}
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:0.001s !important; animation-iteration-count:1 !important; transition-duration:0.15s !important;}
+  html{scroll-behavior:auto;}
+}
+
+/* ---------- Badge unlock toast ---------- */
+.pip-badge-toast{
+  position:fixed; top:20px; right:20px; z-index:200;
+  display:flex; align-items:center; gap:12px;
+  background:#fff; border-radius:18px; box-shadow:0 12px 30px rgba(58,46,35,0.25);
+  padding:14px 18px; max-width:260px;
+  transform:translateX(120%); opacity:0;
+  transition:transform .4s cubic-bezier(.34,1.56,.64,1), opacity .3s ease;
+}
+.pip-badge-toast.show{transform:translateX(0); opacity:1;}
+.pip-badge-toast-icon{font-size:2rem; flex-shrink:0;}
+.pip-badge-toast-title{font-size:0.72rem; font-weight:700; color:var(--apple-red); text-transform:uppercase; letter-spacing:0.04em;}
+.pip-badge-toast-name{font-family:'Baloo 2'; font-weight:700; color:var(--bark-dark); font-size:1.05rem;}
+@media (max-width:600px){
+  .pip-badge-toast{left:16px; right:16px; max-width:none; top:12px;}
+}
+
+/* ---------- Confetti burst (badge unlock) ---------- */
+.pip-confetti-holder{
+  position:fixed; inset:0; z-index:210; pointer-events:none; overflow:hidden;
+}
+.pip-confetti-piece{
+  position:absolute; top:-20px; width:9px; height:14px; opacity:0.95;
+  animation-name:confetti-fall; animation-timing-function:ease-in; animation-fill-mode:forwards;
+}
+@keyframes confetti-fall{
+  0%{transform:translate(0,0) rotate(0deg); opacity:1;}
+  100%{transform:translate(var(--drift), 100vh) rotate(var(--rot)); opacity:0.15;}
+}
+@media (prefers-reduced-motion: reduce){
+  .pip-confetti-holder{display:none;}
+}
+
+/* ---------- Playful card hover ---------- */
+.card, .badge-card.unlocked, .letter-card, .greet-card, .animal-card,
+.day-card, .month-card, .color-card, .shape-card{
+  transition:transform .18s cubic-bezier(.34,1.56,.64,1), box-shadow .18s ease;
+}
+.card:hover, .badge-card.unlocked:hover, .animal-card:hover,
+.day-card:hover, .month-card:hover, .color-card:hover, .shape-card:hover{
+  transform:translateY(-4px) rotate(-1deg);
+}
+.badge-grid{
+  display:grid; grid-template-columns:repeat(auto-fill, minmax(140px,1fr));
+  gap:14px;
+}
+.badge-card{
+  background:#fff; border-radius:18px; padding:16px 12px; text-align:center;
+  box-shadow:var(--shadow); opacity:0.4; filter:grayscale(0.6);
+  transition:opacity .2s ease, filter .2s ease, transform .2s ease;
+}
+.badge-card.unlocked{opacity:1; filter:none; background:linear-gradient(160deg,#fff,var(--cream));}
+.badge-card .b-icon{font-size:2.1rem; margin-bottom:6px;}
+.badge-card .b-title{font-family:'Baloo 2'; font-weight:700; font-size:0.9rem; color:var(--bark-dark);}
+.badge-card .b-desc{font-size:0.72rem; color:#8A7457; margin-top:4px; line-height:1.3;}
+.badge-card .b-progress{font-size:0.7rem; font-weight:700; color:var(--apple-red); margin-top:6px;}
+.badge-card.unlocked .b-progress{color:var(--leaf-dark);}

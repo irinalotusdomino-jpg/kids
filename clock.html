@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#8FD9EA">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Pip's Orchard">
+<title>Clock Time — Pip's Orchard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="app.js"></script>
+<style>
+  #chero{
+    background:linear-gradient(180deg,var(--sky-top) 0%, var(--sky-bottom) 78%);
+    padding-bottom:24px;
+  }
+  .chero-content{position:relative; z-index:4; text-align:center; padding:18px 6% 6px;}
+  .chero-content h1{font-size:2.3rem; margin:8px 0 6px; color:var(--bark-dark);}
+  .chero-content p{margin:0; color:#4A3B2C; font-size:1.05rem;}
+
+  main{max-width:1000px; margin:0 auto; padding:36px 6% 80px;}
+  .section-head{text-align:center; max-width:600px; margin:0 auto 26px;}
+  .section-head h2{font-size:1.9rem; color:var(--bark-dark); margin:8px 0 6px;}
+  .section-head p{color:#5A4A38; margin:0;}
+  section.block{margin-bottom:70px;}
+
+  /* ---------- Practice clock ---------- */
+  .practice-wrap{display:flex; gap:36px; justify-content:center; align-items:center; flex-wrap:wrap;}
+
+  .clock-face{
+    position:relative; width:260px; height:260px; border-radius:50%;
+    background:#fff; box-shadow:var(--shadow), inset 0 0 0 6px var(--cream);
+    flex-shrink:0; touch-action:none; user-select:none;
+  }
+  .clock-center{
+    position:absolute; top:50%; left:50%; width:16px; height:16px; margin:-8px;
+    background:var(--apple-red); border-radius:50%; z-index:5;
+  }
+  .clock-num{
+    position:absolute; width:24px; height:24px; margin:-12px;
+    display:grid; place-content:center; font-family:'Baloo 2'; font-weight:700;
+    color:var(--bark-dark); font-size:1rem;
+  }
+  .hand{
+    position:absolute; left:50%; top:50%; transform-origin:0 0; border-radius:6px;
+    background:var(--ink); cursor:grab;
+  }
+  .hand.hour{width:6px; height:64px; margin-left:-3px; background:var(--bark-dark); z-index:3;}
+  .hand.minute{width:4px; height:98px; margin-left:-2px; background:var(--apple-red); z-index:4;}
+  .hand-grip{
+    position:absolute; left:50%; top:50%; width:34px; height:34px; margin:-17px;
+    border-radius:50%; cursor:grab; z-index:6;
+    background:rgba(255,255,255,0.6); box-shadow:0 0 0 2px rgba(122,90,56,0.25);
+  }
+
+  .readout-card{
+    background:var(--cream); border-radius:26px; box-shadow:var(--shadow);
+    padding:26px 30px; text-align:center; min-width:220px;
+  }
+  .digital-time{font-family:'Baloo 2'; font-size:2.6rem; color:var(--bark-dark);}
+  .time-phrase{font-weight:700; color:var(--blue); font-size:1.15rem; margin-top:8px; min-height:1.6rem;}
+  .speak-time{
+    margin-top:14px; border:none; background:var(--blue); color:#fff; font-weight:700;
+    border-radius:20px; padding:10px 22px; cursor:pointer; box-shadow:var(--shadow);
+  }
+  .preset-row{display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-top:16px;}
+  .preset-btn{
+    border:2px solid #EADFC9; background:#fff; border-radius:12px; padding:6px 10px;
+    font-size:0.78rem; font-weight:700; color:#5A4A38; cursor:pointer;
+  }
+
+  /* ---------- Quiz ---------- */
+  .quiz-wrap{display:flex; gap:30px; justify-content:center; align-items:center; flex-wrap:wrap;}
+  .quiz-card{background:var(--cream); border-radius:26px; box-shadow:var(--shadow); padding:26px; text-align:center; max-width:340px;}
+  .quiz-score{font-family:'Baloo 2'; font-weight:700; color:var(--apple-red); margin-bottom:10px;}
+  .quiz-options{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:16px;}
+  .quiz-btn{
+    border:none; border-radius:14px; padding:12px 8px; font-family:'Quicksand'; font-weight:700;
+    background:#fff; color:var(--bark-dark); box-shadow:var(--shadow); cursor:pointer; font-size:0.9rem;
+  }
+  .quiz-btn.correct{background:var(--leaf-light); color:#fff; animation:pop .3s ease;}
+  .quiz-btn.wrong{background:#F2A39C; animation:shake .35s ease;}
+  @keyframes pop{0%{transform:scale(1);}50%{transform:scale(1.1);}100%{transform:scale(1);}}
+  @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-7px);}75%{transform:translateX(7px);}}
+  .quiz-feedback{margin-top:12px; font-weight:700; min-height:1.4rem; color:var(--bark-dark);}
+  .quiz-next{margin-top:14px;}
+
+  .back-cta{display:flex; justify-content:center; margin-top:10px;}
+
+  @media (max-width:600px){
+    .chero-content h1{font-size:1.9rem;}
+    .clock-face{width:220px; height:220px;}
+    .hand.hour{height:54px;} .hand.minute{height:82px;}
+    .practice-wrap, .quiz-wrap{gap:20px;}
+    .readout-card, .quiz-card{padding:20px 18px;}
+    .digital-time{font-size:2.2rem;}
+    main{padding:26px 5% 70px;}
+    .quiz-options{gap:8px;}
+  }
+
+  @media (max-width:360px){
+    .clock-face{width:190px; height:190px;}
+    .hand.hour{height:46px;} .hand.minute{height:70px;}
+    .clock-num{font-size:0.85rem;}
+    .digital-time{font-size:1.9rem;}
+    .time-phrase{font-size:1rem;}
+    .quiz-options{grid-template-columns:1fr; }
+  }
+
+  @media (pointer:coarse){
+    .hand-grip{width:44px; height:44px; margin:-22px;}
+    .preset-btn{min-height:38px;}
+  }
+</style>
+</head>
+<body>
+
+<section class="section" id="chero">
+  <div class="sun"></div>
+  <div class="cloud cloud1"></div>
+
+  <nav class="nav-bar">
+    <a href="index.html" class="logo"><span class="logo-dot"></span> Pip's Orchard</a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="letters.html">Letters &amp; Numbers</a>
+      <a href="emotions.html">Emotions</a>
+      <a href="colors.html">Colors &amp; Shapes</a>
+      <a href="animals.html">Animals</a>
+      <a href="days.html">Days &amp; Months</a>
+      <a href="clock.html" class="active">Clock</a>
+      <a href="tracker.html">My Tracker</a>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>
+  </nav>
+
+  <div class="chero-content">
+    <span class="eyebrow">TICK TOCK 🕐</span>
+    <h1>What Time Is It?</h1>
+    <p>Drag the hands, hear the time, then try the quiz!</p>
+    <p class="ua-line">Тягни стрілки, слухай час, а потім спробуй вікторину!</p>
+  </div>
+  <div class="mascot-block" style="justify-content:center; margin-top:6px;">
+    <div class="pip-wrap"><div class="pip">
+      <div class="pip-crown"></div><div class="pip-leaf"></div><div class="pip-stem"></div>
+      <div class="pip-body"></div>
+      <div class="pip-eye l"></div><div class="pip-eye r"></div>
+      <div class="pip-cheek l"></div><div class="pip-cheek r"></div>
+      <div class="pip-mouth"></div>
+      <div class="pip-arm l"></div><div class="pip-arm r"></div>
+    </div></div>
+    <div class="speech" id="clockPipSpeech">Tick-tock, let's learn time! ⏰</div>
+  </div>
+</section>
+
+<main>
+  <section class="block" id="practice">
+    <div class="section-head">
+      <span class="eyebrow">PRACTICE</span>
+      <h2>Move the Hands</h2>
+      <p>The short hand is the hour, the long red hand is the minutes. Touch and drag a hand to change the time! 👆</p>
+      <p class="ua-line">Коротка стрілка — години, довга червона — хвилини. Торкнись і тягни стрілку, щоб змінити час! 👆</p>
+    </div>
+    <div class="practice-wrap">
+      <div class="clock-face" id="clockFace">
+        <div class="clock-center"></div>
+        <div class="hand hour" id="hourHand"></div>
+        <div class="hand minute" id="minuteHand"></div>
+        <div class="hand-grip" id="hourGrip"></div>
+        <div class="hand-grip" id="minuteGrip"></div>
+      </div>
+      <div class="readout-card">
+        <div class="digital-time" id="digitalTime">3:00</div>
+        <div class="time-phrase" id="timePhrase">It's three o'clock</div>
+        <button class="speak-time" id="speakTimeBtn">🔊 Hear it</button>
+        <div class="preset-row" id="presetRow"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="quiz">
+    <div class="section-head">
+      <span class="eyebrow">GAME</span>
+      <h2>Clock Quiz</h2>
+      <p>Pip shows a clock — pick the matching time!</p>
+      <p class="ua-line">Піп показує годинник — обери правильний час!</p>
+    </div>
+    <div class="quiz-wrap">
+      <div class="clock-face" id="quizFace" style="cursor:default;">
+        <div class="clock-center"></div>
+        <div class="hand hour" id="quizHourHand" style="cursor:default;"></div>
+        <div class="hand minute" id="quizMinuteHand" style="cursor:default;"></div>
+      </div>
+      <div class="quiz-card">
+        <div class="quiz-score" id="quizScore">🍎 Score: 0</div>
+        <div>What time is this?</div>
+        <div class="quiz-options" id="quizOptions"></div>
+        <div class="quiz-feedback" id="quizFeedback"></div>
+        <button class="mini-btn next quiz-next" id="quizNextBtn" style="border:none; border-radius:14px; padding:10px 18px; background:var(--leaf-dark); color:#fff; font-weight:700; cursor:pointer;">New clock →</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="back-cta">
+    <a class="cta" href="tracker.html">← Back to my tracker</a>
+  </div>
+</main>
+
+<script>
+  function speak(text){
+    if(!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'en-US'; u.rate = 0.82; u.pitch = 1.05;
+    window.speechSynthesis.speak(u);
+  }
+
+  const HOUR_WORDS = ['Twelve','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve'];
+
+  function timePhrase(hour, minute){
+    const h = ((hour - 1) % 12) + 1;
+    const hWord = HOUR_WORDS[h];
+    const nextHWord = HOUR_WORDS[h === 12 ? 1 : h + 1];
+    if(minute === 0) return `It's ${hWord.toLowerCase()} o'clock`;
+    if(minute === 15) return `It's quarter past ${hWord.toLowerCase()}`;
+    if(minute === 30) return `It's half past ${hWord.toLowerCase()}`;
+    if(minute === 45) return `It's quarter to ${nextHWord.toLowerCase()}`;
+    return `It's ${h}:${String(minute).padStart(2,'0')}`;
+  }
+
+  // ---------- Build clock numbers ----------
+  function buildNumbers(faceEl){
+    for(let n=1; n<=12; n++){
+      const angle = (n/12) * 2*Math.PI - Math.PI/2;
+      const r = faceEl.clientWidth ? faceEl.clientWidth*0.38 : 96;
+      const cx = (faceEl.clientWidth||260)/2 + Math.cos(angle)*r;
+      const cy = (faceEl.clientHeight||260)/2 + Math.sin(angle)*r;
+      const el = document.createElement('div');
+      el.className = 'clock-num';
+      el.style.left = cx+'px';
+      el.style.top = cy+'px';
+      el.textContent = n;
+      faceEl.appendChild(el);
+    }
+  }
+  buildNumbers(document.getElementById('clockFace'));
+  buildNumbers(document.getElementById('quizFace'));
+
+  // ---------- Practice clock: drag hands ----------
+  const clockFace = document.getElementById('clockFace');
+  const hourHand = document.getElementById('hourHand');
+  const minuteHand = document.getElementById('minuteHand');
+  const hourGrip = document.getElementById('hourGrip');
+  const minuteGrip = document.getElementById('minuteGrip');
+
+  let curHour = 3, curMinute = 0;
+
+  function positionGrip(grip, lengthPct){
+    // placed via rotation together with hand, handled in render
+  }
+
+  function angleForHour(h){ return ((h % 12) / 12) * 360; }
+  function angleForMinute(m){ return (m / 60) * 360; }
+
+  function render(){
+    const hAngle = angleForHour(curHour) + (curMinute/60)*30;
+    const mAngle = angleForMinute(curMinute);
+    hourHand.style.transform = `rotate(${hAngle + 180}deg)`;
+    minuteHand.style.transform = `rotate(${mAngle + 180}deg)`;
+
+    const hourLen = hourHand.offsetHeight, minuteLen = minuteHand.offsetHeight;
+    const hRad = (hAngle - 90) * Math.PI/180;
+    const mRad = (mAngle - 90) * Math.PI/180;
+    const cx = clockFace.clientWidth/2, cy = clockFace.clientHeight/2;
+    hourGrip.style.left = (cx + Math.cos(hRad)*hourLen)+'px';
+    hourGrip.style.top = (cy + Math.sin(hRad)*hourLen)+'px';
+    minuteGrip.style.left = (cx + Math.cos(mRad)*minuteLen)+'px';
+    minuteGrip.style.top = (cy + Math.sin(mRad)*minuteLen)+'px';
+
+    const displayHour = ((curHour - 1) % 12) + 1;
+    document.getElementById('digitalTime').textContent = `${displayHour}:${String(curMinute).padStart(2,'0')}`;
+    document.getElementById('timePhrase').textContent = timePhrase(curHour, curMinute);
+  }
+
+  function angleFromPointer(evt){
+    const rect = clockFace.getBoundingClientRect();
+    const clientX = evt.touches ? evt.touches[0].clientX : evt.clientX;
+    const clientY = evt.touches ? evt.touches[0].clientY : evt.clientY;
+    const cx = rect.left + rect.width/2, cy = rect.top + rect.height/2;
+    const dx = clientX - cx, dy = clientY - cy;
+    let deg = Math.atan2(dx, -dy) * 180/Math.PI;
+    if(deg < 0) deg += 360;
+    return deg;
+  }
+
+  let dragging = null;
+  function startDrag(which){ return (evt)=>{ dragging = which; evt.preventDefault(); }; }
+  function onMove(evt){
+    if(!dragging) return;
+    const deg = angleFromPointer(evt);
+    if(dragging === 'hour'){
+      let h = Math.round(deg/30) % 12;
+      if(h === 0) h = 12;
+      curHour = h;
+    } else {
+      let m = Math.round(deg/90) * 15 % 60;
+      curMinute = m;
+    }
+    render();
+    evt.preventDefault();
+  }
+  function endDrag(){ dragging = null; }
+
+  hourGrip.addEventListener('mousedown', startDrag('hour'));
+  minuteGrip.addEventListener('mousedown', startDrag('minute'));
+  hourGrip.addEventListener('touchstart', startDrag('hour'), {passive:false});
+  minuteGrip.addEventListener('touchstart', startDrag('minute'), {passive:false});
+  window.addEventListener('mousemove', onMove);
+  window.addEventListener('touchmove', onMove, {passive:false});
+  window.addEventListener('mouseup', endDrag);
+  window.addEventListener('touchend', endDrag);
+
+  document.getElementById('speakTimeBtn').addEventListener('click', ()=> speak(timePhrase(curHour, curMinute)));
+
+  const presets = [[7,0],[8,30],[12,0],[3,15],[6,45]];
+  const presetRow = document.getElementById('presetRow');
+  presets.forEach(([h,m])=>{
+    const b = document.createElement('button');
+    b.className = 'preset-btn';
+    b.textContent = `${h}:${String(m).padStart(2,'0')}`;
+    b.addEventListener('click', ()=>{ curHour=h; curMinute=m; render(); });
+    presetRow.appendChild(b);
+  });
+
+  render();
+
+  // ---------- Quiz ----------
+  const quizHourHand = document.getElementById('quizHourHand');
+  const quizMinuteHand = document.getElementById('quizMinuteHand');
+  let quizScore = 0;
+  let quizAnswer = '';
+  let quizLocked = false;
+
+  function shuffle(arr){
+    const a = arr.slice();
+    for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+    return a;
+  }
+
+  function randomTime(){
+    const h = 1 + Math.floor(Math.random()*12);
+    const m = [0,15,30,45][Math.floor(Math.random()*4)];
+    return [h,m];
+  }
+
+  function setQuizClock(h,m){
+    const hAngle = angleForHour(h) + (m/60)*30;
+    const mAngle = angleForMinute(m);
+    quizHourHand.style.transform = `rotate(${hAngle + 180}deg)`;
+    quizMinuteHand.style.transform = `rotate(${mAngle + 180}deg)`;
+  }
+
+  function newQuizRound(){
+    quizLocked = false;
+    document.getElementById('quizFeedback').textContent = '';
+    const [h,m] = randomTime();
+    setQuizClock(h,m);
+    quizAnswer = timePhrase(h,m);
+
+    const wrongs = new Set();
+    while(wrongs.size < 3){
+      const [wh,wm] = randomTime();
+      const phrase = timePhrase(wh,wm);
+      if(phrase !== quizAnswer) wrongs.add(phrase);
+    }
+    const options = shuffle([quizAnswer, ...wrongs]);
+    const optWrap = document.getElementById('quizOptions');
+    optWrap.innerHTML = '';
+    options.forEach(opt=>{
+      const btn = document.createElement('button');
+      btn.className = 'quiz-btn';
+      btn.textContent = opt;
+      btn.dataset.val = opt;
+      btn.addEventListener('click', ()=> handleQuizPick(btn, opt));
+      optWrap.appendChild(btn);
+    });
+    speak(quizAnswer.replace("It's ",""));
+  }
+
+  function handleQuizPick(btn, opt){
+    if(quizLocked) return;
+    const feedback = document.getElementById('quizFeedback');
+    if(opt === quizAnswer){
+      quizLocked = true;
+      btn.classList.add('correct');
+      quizScore++;
+      document.getElementById('quizScore').textContent = '🍎 Score: ' + quizScore;
+      feedback.textContent = 'Yes! ' + quizAnswer + ' 🎉';
+      speak('Correct! ' + quizAnswer);
+      pipUpdateBest('pipClockBest', quizScore);
+      pipAnnounceNewBadges();
+      setTimeout(newQuizRound, 1600);
+    } else {
+      quizLocked = true;
+      btn.classList.add('wrong');
+      const optWrap = document.getElementById('quizOptions');
+      const correctBtn = [...optWrap.children].find(b => b.dataset.val === quizAnswer);
+      if(correctBtn) correctBtn.classList.add('correct');
+      feedback.textContent = 'Not quite — ' + quizAnswer;
+      speak(quizAnswer);
+      setTimeout(newQuizRound, 1900);
+    }
+  }
+
+  document.getElementById('quizNextBtn').addEventListener('click', newQuizRound);
+  newQuizRound();
+  pipApplyMood();
+  pipInitChrome();
+</script>
+
+<footer class="site-footer">
+  <div class="footer-inner"><span class="footer-pip">🍎</span> Pip's Orchard — Learn English · <a href="parents.html">Для батьків</a></div>
+</footer>
+<button class="to-top-btn" id="toTopBtn" aria-label="Back to top">↑</button>
+
+
+</body>
+</html>

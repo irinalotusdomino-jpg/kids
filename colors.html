@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#8FD9EA">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Pip's Orchard">
+<title>Colors &amp; Shapes — Pip's Orchard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="app.js"></script>
+<style>
+  #cshero{
+    background:linear-gradient(180deg,var(--sky2-top) 0%, var(--sky2-bottom) 78%);
+    padding-bottom:24px;
+  }
+  .cshero-content{position:relative; z-index:4; text-align:center; padding:18px 6% 6px;}
+  .cshero-content h1{font-size:2.3rem; margin:8px 0 6px; color:var(--bark-dark);}
+  .cshero-content p{margin:0; color:#4A3B2C; font-size:1.05rem;}
+
+  .subnav{
+    position:sticky; top:78px; z-index:20;
+    display:flex; gap:10px; justify-content:center; flex-wrap:wrap;
+    background:rgba(255,248,234,0.92); backdrop-filter:blur(6px);
+    padding:12px 5%; box-shadow:0 4px 14px rgba(58,46,35,0.08);
+  }
+  .subnav a{
+    text-decoration:none; font-weight:700; font-size:0.85rem; color:var(--bark-dark);
+    background:#fff; padding:8px 16px; border-radius:20px; box-shadow:var(--shadow);
+    white-space:nowrap;
+  }
+
+  main{max-width:1100px; margin:0 auto; padding:36px 6% 80px;}
+  .section-head{text-align:center; max-width:600px; margin:0 auto 28px;}
+  .section-head h2{font-size:1.9rem; color:var(--bark-dark); margin:8px 0 6px;}
+  .section-head p{color:#5A4A38; margin:0;}
+  section.block{scroll-margin-top:140px; margin-bottom:80px;}
+
+  /* ---------- Color swatches ---------- */
+  .color-grid{
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(120px,1fr));
+    gap:16px;
+  }
+  .color-card{
+    background:var(--cream); border-radius:20px; box-shadow:var(--shadow);
+    padding:16px 10px; text-align:center; cursor:pointer; transition:transform .15s ease;
+  }
+  .swatch{
+    width:64px; height:64px; border-radius:50%; margin:0 auto 8px;
+    display:grid; place-content:center; font-size:1.5rem; box-shadow:0 4px 10px rgba(0,0,0,0.15);
+  }
+  .color-name{font-family:'Baloo 2'; font-weight:700; color:var(--bark-dark); font-size:0.95rem;}
+
+  /* ---------- Shapes ---------- */
+  .shape-grid{
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(120px,1fr));
+    gap:16px;
+  }
+  .shape-card{
+    background:var(--cream); border-radius:20px; box-shadow:var(--shadow);
+    padding:18px 10px 14px; text-align:center; cursor:pointer; transition:transform .15s ease;
+  }
+  .shape-holder{height:64px; display:flex; align-items:center; justify-content:center; margin-bottom:8px;}
+  .shape-name{font-family:'Baloo 2'; font-weight:700; color:var(--bark-dark); font-size:0.95rem;}
+
+  .sh-circle{width:56px; height:56px; border-radius:50%; background:var(--apple-red);}
+  .sh-square{width:52px; height:52px; border-radius:6px; background:var(--blue);}
+  .sh-triangle{width:0; height:0; border-left:28px solid transparent; border-right:28px solid transparent; border-bottom:50px solid var(--leaf-dark);}
+  .sh-rectangle{width:68px; height:40px; border-radius:6px; background:var(--sun);}
+  .sh-star{
+    width:56px; height:56px; background:#9B6FD1;
+    clip-path:polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  }
+  .sh-heart{position:relative; width:56px; height:50px;}
+  .sh-heart::before, .sh-heart::after{
+    content:""; position:absolute; top:0; width:29px; height:46px; background:#FF8FB3; border-radius:29px 29px 0 0;
+  }
+  .sh-heart::before{left:28px; transform:rotate(-45deg); transform-origin:0 100%;}
+  .sh-heart::after{left:0; transform:rotate(45deg); transform-origin:100% 100%;}
+  .sh-oval{width:70px; height:44px; border-radius:50%; background:#8A5A38;}
+  .sh-diamond{width:42px; height:42px; background:#4FA8D8; transform:rotate(45deg);}
+
+  /* ---------- Paint the apple ---------- */
+  .paint-wrap{display:flex; gap:32px; justify-content:center; align-items:center; flex-wrap:wrap;}
+  .paint-apple-holder{
+    background:var(--cream); border-radius:26px; box-shadow:var(--shadow); padding:24px; text-align:center;
+  }
+  .paint-apple{width:180px; height:180px;}
+  .paint-apple svg{width:100%; height:100%; display:block;}
+  .apple-fill{ transition: fill .25s ease; }
+  .paint-palette{
+    display:grid; grid-template-columns:repeat(5,1fr); gap:10px; max-width:260px; margin-top:16px;
+  }
+  .paint-swatch{
+    width:38px; height:38px; border-radius:50%; border:3px solid #fff; box-shadow:0 3px 8px rgba(0,0,0,0.2);
+    cursor:pointer;
+  }
+  .paint-caption{margin-top:10px; font-family:'Baloo 2'; font-weight:700; color:var(--bark-dark); min-height:1.4rem;}
+
+  /* ---------- Quiz ---------- */
+  .csq-wrap{display:flex; gap:30px; justify-content:center; align-items:center; flex-wrap:wrap;}
+  .csq-stage{background:var(--cream); border-radius:26px; box-shadow:var(--shadow); padding:30px; text-align:center; min-width:160px;}
+  .csq-target{width:80px; height:80px; margin:0 auto; display:flex; align-items:center; justify-content:center;}
+  .csq-card{background:var(--cream); border-radius:26px; box-shadow:var(--shadow); padding:26px; text-align:center; max-width:340px;}
+  .csq-score{font-family:'Baloo 2'; font-weight:700; color:var(--apple-red); margin-bottom:10px;}
+  .csq-options{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:6px;}
+  .csq-btn{
+    border:none; border-radius:14px; padding:12px 8px; font-family:'Quicksand'; font-weight:700;
+    background:#fff; color:var(--bark-dark); box-shadow:var(--shadow); cursor:pointer; font-size:0.88rem;
+  }
+  .csq-btn.correct{background:var(--leaf-light); color:#fff; animation:pop .3s ease;}
+  .csq-btn.wrong{background:#F2A39C; animation:shake .35s ease;}
+  @keyframes pop{0%{transform:scale(1);}50%{transform:scale(1.1);}100%{transform:scale(1);}}
+  @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-7px);}75%{transform:translateX(7px);}}
+  .csq-feedback{margin-top:12px; font-weight:700; min-height:1.4rem; color:var(--bark-dark);}
+
+  .back-cta{display:flex; justify-content:center; margin-top:10px;}
+
+  @media (max-width:600px){
+    .cshero-content h1{font-size:1.9rem;}
+    .color-grid, .shape-grid{grid-template-columns:repeat(auto-fill, minmax(96px,1fr)); gap:12px;}
+    .swatch{width:52px; height:52px;}
+    .paint-apple{width:140px; height:140px;}
+    .subnav{top:64px;}
+    main{padding:26px 5% 70px;}
+  }
+</style>
+</head>
+<body>
+
+<section class="section" id="cshero">
+  <div class="sun"></div>
+  <div class="cloud cloud1"></div>
+  <div class="cloud cloud2"></div>
+
+  <nav class="nav-bar">
+    <a href="index.html" class="logo"><span class="logo-dot"></span> Pip's Orchard</a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="letters.html">Letters &amp; Numbers</a>
+      <a href="emotions.html">Emotions</a>
+      <a href="colors.html" class="active">Colors &amp; Shapes</a>
+      <a href="animals.html">Animals</a>
+      <a href="days.html">Days &amp; Months</a>
+      <a href="clock.html">Clock</a>
+      <a href="tracker.html">My Tracker</a>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>
+  </nav>
+
+  <div class="cshero-content">
+    <span class="eyebrow">SO MANY COLORS 🎨</span>
+    <h1>Colors &amp; Shapes</h1>
+    <p>Tap to hear each color and shape, then paint Pip's apple any color you like!</p>
+    <p class="ua-line">Натискай, щоб почути кожен колір і форму, а потім розфарбуй яблуко Піпа!</p>
+  </div>
+  <div class="mascot-block" style="justify-content:center; margin-top:6px;">
+    <div class="pip-wrap"><div class="pip">
+      <div class="pip-crown"></div><div class="pip-leaf"></div><div class="pip-stem"></div>
+      <div class="pip-body"></div>
+      <div class="pip-eye l"></div><div class="pip-eye r"></div>
+      <div class="pip-cheek l"></div><div class="pip-cheek r"></div>
+      <div class="pip-mouth"></div>
+      <div class="pip-arm l"></div><div class="pip-arm r"></div>
+    </div></div>
+    <div class="speech">Which color is your favorite? 🌈</div>
+  </div>
+</section>
+
+<div class="subnav">
+  <a href="#colors">🎨 Colors</a>
+  <a href="#shapes">⭐ Shapes</a>
+  <a href="#paint">🍎 Paint the Apple</a>
+  <a href="#csquiz">🎧 Quiz</a>
+</div>
+
+<main>
+  <section class="block" id="colors">
+    <div class="section-head">
+      <span class="eyebrow">RAINBOW</span>
+      <h2>Colors</h2>
+      <p>Tap a color to hear its name.</p>
+      <p class="ua-line">Натисни на колір, щоб почути його назву.</p>
+    </div>
+    <div class="color-grid" id="colorGrid"></div>
+  </section>
+
+  <section class="block" id="shapes">
+    <div class="section-head">
+      <span class="eyebrow">SHAPES</span>
+      <h2>Shapes</h2>
+      <p>Every shape has a name — tap to hear it!</p>
+      <p class="ua-line">Кожна форма має назву — натисни, щоб почути!</p>
+    </div>
+    <div class="shape-grid" id="shapeGrid"></div>
+  </section>
+
+  <section class="block" id="paint">
+    <div class="section-head">
+      <span class="eyebrow">CREATIVE TIME</span>
+      <h2>Paint the Apple</h2>
+      <p>Pick a color from the palette to paint Pip's apple!</p>
+      <p class="ua-line">Обери колір з палітри, щоб розфарбувати яблуко Піпа!</p>
+    </div>
+    <div class="paint-wrap">
+      <div class="paint-apple-holder">
+        <div class="paint-apple">
+          <svg viewBox="0 0 100 100">
+            <path class="apple-fill" fill="#E8483E" d="M50 30 C 30 20, 10 35, 12 55 C 14 78, 32 92, 50 92 C 68 92, 86 78, 88 55 C 90 35, 70 20, 50 30 Z"/>
+            <rect x="47" y="10" width="6" height="16" rx="3" fill="#6E4527"/>
+            <path d="M53 16 C 65 6, 78 10, 78 10 C 78 10, 72 22, 58 22 Z" fill="#5FB86E"/>
+          </svg>
+        </div>
+        <div class="paint-caption" id="paintCaption">Pick a color!</div>
+      </div>
+      <div class="paint-palette" id="paintPalette"></div>
+    </div>
+  </section>
+
+  <section class="block" id="csquiz">
+    <div class="section-head">
+      <span class="eyebrow">GAME</span>
+      <h2>Color &amp; Shape Quiz</h2>
+      <p>What do you see? Pick the right word!</p>
+      <p class="ua-line">Що ти бачиш? Обери правильне слово!</p>
+    </div>
+    <div class="csq-wrap">
+      <div class="csq-stage">
+        <div class="csq-target" id="csqTarget"></div>
+      </div>
+      <div class="csq-card">
+        <div class="csq-score" id="csqScore">🍎 Score: 0</div>
+        <div id="csqPrompt">What is this?</div>
+        <div class="csq-options" id="csqOptions"></div>
+        <div class="csq-feedback" id="csqFeedback"></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="back-cta">
+    <a class="cta" href="animals.html">Meet the animals →</a>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner"><span class="footer-pip">🍎</span> Pip's Orchard — Learn English · <a href="parents.html">Для батьків</a></div>
+</footer>
+<button class="to-top-btn" id="toTopBtn" aria-label="Back to top">↑</button>
+
+<script>
+  function speak(text){
+    if(!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'en-US'; u.rate = 0.85; u.pitch = 1.05;
+    window.speechSynthesis.speak(u);
+  }
+
+  const colors = [
+    ['Red','#E8483E','🍎'], ['Orange','#FFA53E','🍊'], ['Yellow','#FFD93E','🍋'],
+    ['Green','#5FB86E','🍏'], ['Blue','#4FA8D8','💧'], ['Purple','#9B6FD1','🍇'],
+    ['Pink','#FF8FB3','🌸'], ['Brown','#8A5A38','🍫'], ['Black','#3A2E23','⚫'],
+    ['White','#FFFFFF','☁️']
+  ];
+
+  const shapes = [
+    ['Circle','sh-circle'], ['Square','sh-square'], ['Triangle','sh-triangle'],
+    ['Rectangle','sh-rectangle'], ['Star','sh-star'], ['Heart','sh-heart'],
+    ['Oval','sh-oval'], ['Diamond','sh-diamond']
+  ];
+
+  // ---------- Colors grid ----------
+  const colorGrid = document.getElementById('colorGrid');
+  colors.forEach(([name, hex, emoji])=>{
+    const card = document.createElement('div');
+    card.className = 'color-card';
+    const border = hex === '#FFFFFF' ? 'border:2px solid #EADFC9;' : '';
+    card.innerHTML = `
+      <div class="swatch" style="background:${hex}; ${border}">${emoji}</div>
+      <div class="color-name">${name}</div>`;
+    card.addEventListener('click', ()=>{
+      speak(name);
+      pipMarkColorSeen(name);
+      pipAnnounceNewBadges();
+    });
+    colorGrid.appendChild(card);
+  });
+
+  // ---------- Shapes grid ----------
+  const shapeGrid = document.getElementById('shapeGrid');
+  shapes.forEach(([name, cls])=>{
+    const card = document.createElement('div');
+    card.className = 'shape-card';
+    card.innerHTML = `
+      <div class="shape-holder"><div class="${cls}"></div></div>
+      <div class="shape-name">${name}</div>`;
+    card.addEventListener('click', ()=>{
+      speak(name);
+      pipMarkShapeSeen(name);
+      pipAnnounceNewBadges();
+    });
+    shapeGrid.appendChild(card);
+  });
+
+  // ---------- Paint the apple ----------
+  const paintPalette = document.getElementById('paintPalette');
+  const appleFill = document.querySelector('.apple-fill');
+  colors.filter(c => c[0] !== 'White' && c[0] !== 'Black').forEach(([name, hex])=>{
+    const sw = document.createElement('div');
+    sw.className = 'paint-swatch';
+    sw.style.background = hex;
+    sw.addEventListener('click', ()=>{
+      appleFill.setAttribute('fill', hex);
+      document.getElementById('paintCaption').textContent = name + ' apple!';
+      speak(name);
+    });
+    paintPalette.appendChild(sw);
+  });
+
+  // ---------- Quiz ----------
+  let csqScore = 0;
+  let csqAnswer = '';
+  let csqLocked = false;
+
+  function shuffle(arr){
+    const a = arr.slice();
+    for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+    return a;
+  }
+
+  function newCsqRound(){
+    csqLocked = false;
+    document.getElementById('csqFeedback').textContent = '';
+    const target = document.getElementById('csqTarget');
+    target.innerHTML = '';
+
+    const useColor = Math.random() < 0.5;
+    let pool, answer;
+    if(useColor){
+      const [name, hex] = colors[Math.floor(Math.random()*colors.length)];
+      const border = hex === '#FFFFFF' ? 'border:2px solid #EADFC9;' : '';
+      target.innerHTML = `<div class="swatch" style="width:70px;height:70px;background:${hex}; ${border}"></div>`;
+      answer = name;
+      pool = colors.map(c=>c[0]);
+    } else {
+      const [name, cls] = shapes[Math.floor(Math.random()*shapes.length)];
+      target.innerHTML = `<div class="${cls}"></div>`;
+      answer = name;
+      pool = shapes.map(s=>s[0]);
+    }
+    csqAnswer = answer;
+
+    const wrongs = shuffle(pool.filter(n => n !== answer)).slice(0,3);
+    const options = shuffle([answer, ...wrongs]);
+    const optWrap = document.getElementById('csqOptions');
+    optWrap.innerHTML = '';
+    options.forEach(opt=>{
+      const btn = document.createElement('button');
+      btn.className = 'csq-btn';
+      btn.textContent = opt;
+      btn.dataset.val = opt;
+      btn.addEventListener('click', ()=> handleCsqPick(btn, opt));
+      optWrap.appendChild(btn);
+    });
+  }
+
+  function handleCsqPick(btn, opt){
+    if(csqLocked) return;
+    const feedback = document.getElementById('csqFeedback');
+    if(opt === csqAnswer){
+      csqLocked = true;
+      btn.classList.add('correct');
+      csqScore++;
+      document.getElementById('csqScore').textContent = '🍎 Score: ' + csqScore;
+      feedback.textContent = `Yes! That's ${csqAnswer}! 🎉`;
+      speak(`Correct! ${csqAnswer}`);
+      pipUpdateBest('pipColorQuizBest', csqScore);
+      pipAnnounceNewBadges();
+      setTimeout(newCsqRound, 1500);
+    } else {
+      csqLocked = true;
+      btn.classList.add('wrong');
+      const optWrap = document.getElementById('csqOptions');
+      const correctBtn = [...optWrap.children].find(b => b.dataset.val === csqAnswer);
+      if(correctBtn) correctBtn.classList.add('correct');
+      feedback.textContent = `Not quite — it's ${csqAnswer}!`;
+      speak(csqAnswer);
+      setTimeout(newCsqRound, 1800);
+    }
+  }
+
+  newCsqRound();
+  pipApplyMood();
+  pipInitChrome();
+</script>
+
+</body>
+</html>

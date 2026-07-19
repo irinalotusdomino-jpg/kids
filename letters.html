@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#8FD9EA">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Pip's Orchard">
+<title>Letters &amp; Numbers — Pip's Orchard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="app.js"></script>
+<style>
+  #lhero{
+    background:linear-gradient(180deg,var(--sky-top) 0%, var(--sky-bottom) 78%);
+    padding-bottom:30px;
+  }
+  .lhero-content{
+    position:relative; z-index:4;
+    display:flex; align-items:center; justify-content:center; gap:22px;
+    padding:18px 6% 8px; text-align:center; flex-wrap:wrap;
+  }
+  .lhero-content h1{font-size:2.4rem; margin:8px 0 6px; color:var(--bark-dark);}
+  .lhero-content p{margin:0; color:#4A3B2C; font-size:1.05rem;}
+  .lhero-text{max-width:480px;}
+
+  /* ---------- Section sub-nav ---------- */
+  .subnav{
+    position:sticky; top:78px; z-index:20;
+    display:flex; gap:10px; justify-content:center; flex-wrap:wrap;
+    background:rgba(255,248,234,0.92); backdrop-filter:blur(6px);
+    padding:12px 5%; box-shadow:0 4px 14px rgba(58,46,35,0.08);
+  }
+  .subnav a{
+    text-decoration:none; font-weight:700; font-size:0.85rem; color:var(--bark-dark);
+    background:#fff; padding:8px 16px; border-radius:20px; box-shadow:var(--shadow);
+    white-space:nowrap;
+  }
+
+  main{max-width:1100px; margin:0 auto; padding:36px 6% 80px;}
+
+  .section-head{text-align:center; max-width:600px; margin:0 auto 28px;}
+  .section-head h2{font-size:1.9rem; color:var(--bark-dark); margin:8px 0 6px;}
+  .section-head p{color:#5A4A38; margin:0;}
+  section.block{scroll-margin-top:140px; margin-bottom:80px;}
+
+  /* ---------- Alphabet grid ---------- */
+  .abc-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(84px, 1fr));
+    gap:14px;
+  }
+  .letter-card{perspective:800px; height:100px; cursor:pointer;}
+  .letter-card-inner{
+    position:relative; width:100%; height:100%;
+    transform-style:preserve-3d; transition:transform 0.5s cubic-bezier(.4,.2,.2,1);
+    border-radius:18px; box-shadow:var(--shadow);
+  }
+  .letter-card.flipped .letter-card-inner{transform:rotateY(180deg);}
+  .letter-face{
+    position:absolute; inset:0; backface-visibility:hidden;
+    border-radius:18px; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    font-family:'Baloo 2';
+  }
+  .letter-front{color:#fff; font-size:2.3rem; font-weight:700;}
+  .letter-back{background:var(--cream); transform:rotateY(180deg); color:var(--bark-dark); padding:4px;}
+  .letter-back .emoji{font-size:1.9rem; line-height:1;}
+  .letter-back .word{font-size:0.85rem; margin-top:2px; font-weight:700;}
+
+  .lc0{background:linear-gradient(160deg,#F26B61,var(--apple-red));}
+  .lc1{background:linear-gradient(160deg,#FFD873,var(--sun));}
+  .lc2{background:linear-gradient(160deg,#7AC988,var(--leaf-dark));}
+  .lc3{background:linear-gradient(160deg,#78C2E8,var(--blue));}
+
+  .speak-btn{
+    position:absolute; top:6px; right:6px; width:26px; height:26px; border-radius:50%;
+    background:rgba(255,255,255,0.85); border:none; display:grid; place-content:center;
+    font-size:0.85rem; cursor:pointer; box-shadow:0 2px 4px rgba(0,0,0,0.15);
+  }
+
+  /* ---------- Tracing ---------- */
+  .trace-wrap{display:flex; gap:28px; justify-content:center; align-items:flex-start; flex-wrap:wrap;}
+  .trace-picker{
+    display:grid; grid-template-columns:repeat(6,1fr); gap:8px; max-width:280px;
+  }
+  .pick-btn{
+    width:40px; height:40px; border-radius:10px; border:none; cursor:pointer;
+    background:#fff; color:var(--bark-dark); font-family:'Baloo 2'; font-weight:700;
+    box-shadow:var(--shadow); font-size:1rem;
+  }
+  .pick-btn.current{background:var(--apple-red); color:#fff; transform:scale(1.08);}
+  .trace-card{
+    background:var(--cream); border-radius:26px; box-shadow:var(--shadow);
+    padding:20px; text-align:center;
+  }
+  .trace-canvas-holder{
+    border-radius:20px; overflow:hidden; background:#fff; box-shadow:inset 0 0 0 3px #F0E4CC;
+    touch-action:none; width:300px; height:300px; margin:0 auto;
+  }
+  #traceCanvas{display:block; width:300px; height:300px; touch-action:none; cursor:crosshair;}
+  .trace-controls{display:flex; gap:10px; justify-content:center; margin-top:16px; flex-wrap:wrap;}
+  .mini-btn{
+    border:none; border-radius:14px; padding:10px 16px; font-family:'Quicksand'; font-weight:700;
+    cursor:pointer; font-size:0.9rem; box-shadow:var(--shadow);
+  }
+  .mini-btn.hear{background:var(--blue); color:#fff;}
+  .mini-btn.clear{background:#fff; color:var(--bark-dark);}
+  .mini-btn.next{background:var(--leaf-dark); color:#fff;}
+  .trace-praise{
+    margin-top:10px; font-family:'Baloo 2'; font-weight:700; color:var(--leaf-dark);
+    min-height:1.4rem; opacity:0; transition:opacity .3s ease;
+  }
+  .trace-praise.show{opacity:1;}
+
+  /* ---------- Listen & Match game ---------- */
+  .match-card{
+    background:var(--cream); border-radius:26px; box-shadow:var(--shadow);
+    padding:30px 26px; max-width:560px; margin:0 auto; text-align:center;
+  }
+  .match-score{font-family:'Baloo 2'; font-weight:700; color:var(--apple-red); margin-bottom:14px; font-size:1.1rem;}
+  .play-sound-btn{
+    width:96px; height:96px; border-radius:50%; border:none; cursor:pointer;
+    background:var(--blue); color:#fff; font-size:2.4rem;
+    box-shadow:0 8px 0 #2E7BA8, var(--shadow);
+    margin-bottom:10px; transition:transform .12s ease;
+  }
+  .play-sound-btn:active{transform:translateY(6px); box-shadow:0 2px 0 #2E7BA8;}
+  .match-prompt{font-weight:700; color:#5A4A38; margin-bottom:20px;}
+  .match-options{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; max-width:400px; margin:0 auto;}
+  .match-btn{
+    aspect-ratio:1; border-radius:16px; border:none; cursor:pointer;
+    background:#fff; font-family:'Baloo 2'; font-size:1.8rem; font-weight:700;
+    color:var(--bark-dark); box-shadow:var(--shadow); transition:transform .12s ease;
+  }
+  .match-btn:hover{transform:translateY(-3px);}
+  .match-btn.correct{background:var(--leaf-light); color:#fff; animation:pop .3s ease;}
+  .match-btn.wrong{background:#F2A39C; animation:shake .35s ease;}
+  @keyframes pop{0%{transform:scale(1);}50%{transform:scale(1.15);}100%{transform:scale(1);}}
+  @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-8px);}75%{transform:translateX(8px);}}
+  .match-feedback{margin-top:16px; font-family:'Baloo 2'; font-weight:700; min-height:1.6rem; color:var(--bark-dark);}
+
+  /* ---------- Numbers ---------- */
+  .num-row{display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-bottom:30px;}
+  .num-btn{
+    width:56px; height:56px; border-radius:50%; border:none; cursor:pointer;
+    background:var(--cream); color:var(--bark-dark); font-family:'Baloo 2';
+    font-size:1.4rem; font-weight:700; box-shadow:var(--shadow);
+    transition:transform .15s ease, background .15s ease, color .15s ease;
+  }
+  .num-btn:hover{transform:translateY(-3px);}
+  .num-btn.active{background:var(--apple-red); color:#fff; transform:scale(1.08);}
+  .counting-stage{
+    background:var(--cream); border-radius:26px; box-shadow:var(--shadow);
+    padding:28px 24px; text-align:center; max-width:640px; margin:0 auto;
+  }
+  .counting-word{font-family:'Baloo 2'; font-size:1.6rem; color:var(--bark-dark); margin-bottom:16px; min-height:2.2rem;}
+  .apple-row{display:flex; flex-wrap:wrap; gap:10px; justify-content:center; min-height:60px; align-items:center;}
+  .mini-apple{
+    width:34px; height:32px; border-radius:50% 50% 50% 50% / 55% 55% 45% 45%;
+    background:radial-gradient(circle at 35% 30%, var(--apple-shine), var(--apple-red));
+    box-shadow:0 3px 6px rgba(0,0,0,0.2);
+    opacity:0; transform:scale(0.3);
+    animation:pop-in .35s cubic-bezier(.34,1.56,.64,1) forwards;
+  }
+  @keyframes pop-in{to{opacity:1; transform:scale(1);}}
+
+  .back-cta{display:flex; justify-content:center; margin-top:20px;}
+
+  @media (max-width:600px){
+    .lhero-content h1{font-size:1.8rem;}
+    .letter-front{font-size:1.9rem;}
+    .abc-grid{grid-template-columns:repeat(auto-fill, minmax(70px, 1fr)); gap:10px;}
+    .letter-card{height:82px;}
+    .num-btn{width:46px; height:46px; font-size:1.1rem;}
+    .trace-canvas-holder, #traceCanvas{width:250px; height:250px;}
+    .trace-wrap{gap:16px;}
+    .trace-picker{grid-template-columns:repeat(6,1fr); max-width:230px;}
+    .play-sound-btn{width:80px; height:80px; font-size:2rem;}
+    .match-options{grid-template-columns:repeat(2,1fr); max-width:220px;}
+    .subnav{gap:6px; padding:10px 4%; top:64px;}
+    .subnav a{padding:7px 12px; font-size:0.78rem;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .mini-apple{animation:none; opacity:1; transform:scale(1);}
+    .match-btn.correct, .match-btn.wrong{animation:none;}
+  }
+</style>
+</head>
+<body>
+
+<section class="section" id="lhero">
+  <div class="sun"></div>
+  <div class="cloud cloud1"></div>
+  <div class="cloud cloud2"></div>
+
+  <nav class="nav-bar">
+    <a href="index.html" class="logo"><span class="logo-dot"></span> Pip's Orchard</a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="letters.html" class="active">Letters &amp; Numbers</a>
+      <a href="emotions.html">Emotions</a>
+      <a href="colors.html">Colors &amp; Shapes</a>
+      <a href="animals.html">Animals</a>
+      <a href="days.html">Days &amp; Months</a>
+      <a href="clock.html">Clock</a>
+      <a href="tracker.html">My Tracker</a>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>
+  </nav>
+
+  <div class="lhero-content">
+    <div class="lhero-text">
+      <span class="eyebrow">TAP, TRACE, LISTEN 🔤</span>
+      <h1>Letters &amp; Numbers</h1>
+      <p>Flip cards, trace with your finger, match sounds, and count apples with Pip!</p>
+      <p class="ua-line">Перевертай картки, обводь пальцем, підбирай звуки й рахуй яблука разом із Піпом!</p>
+    </div>
+  </div>
+  <div class="mascot-block" style="justify-content:center; margin-top:6px;">
+    <div class="pip-wrap"><div class="pip">
+      <div class="pip-crown"></div><div class="pip-leaf"></div><div class="pip-stem"></div>
+      <div class="pip-body"></div>
+      <div class="pip-eye l"></div><div class="pip-eye r"></div>
+      <div class="pip-cheek l"></div><div class="pip-cheek r"></div>
+      <div class="pip-mouth"></div>
+      <div class="pip-arm l"></div><div class="pip-arm r"></div>
+    </div></div>
+    <div class="speech" id="heroSpeech">Go on, tap something! 😄</div>
+  </div>
+</section>
+
+<div class="subnav">
+  <a href="#abc">🔤 Alphabet</a>
+  <a href="#trace">✍️ Trace</a>
+  <a href="#match">🎧 Listen &amp; Match</a>
+  <a href="#numbers">🔢 Numbers</a>
+</div>
+
+<main>
+  <section class="block" id="abc">
+    <div class="section-head">
+      <span class="eyebrow">ABC</span>
+      <h2>The Alphabet</h2>
+      <p>26 letters, 26 friends. Flip a card to meet them all.</p>
+      <p class="ua-line">26 літер, 26 друзів. Натисни на картку, щоб познайомитись.</p>
+    </div>
+    <div class="abc-grid" id="abcGrid"></div>
+  </section>
+
+  <section class="block" id="trace">
+    <div class="section-head">
+      <span class="eyebrow">FINGER TIME</span>
+      <h2>Trace the Letter</h2>
+      <p>Follow the grey letter with your finger or mouse.</p>
+      <p class="ua-line">Обведи сіру букву пальцем або мишкою.</p>
+    </div>
+    <div class="trace-wrap">
+      <div class="trace-picker" id="tracePicker"></div>
+      <div class="trace-card">
+        <div class="trace-canvas-holder">
+          <canvas id="traceCanvas" width="300" height="300"></canvas>
+        </div>
+        <div class="trace-controls">
+          <button class="mini-btn hear" id="traceHear">🔊 Hear it</button>
+          <button class="mini-btn clear" id="traceClear">↺ Clear</button>
+          <button class="mini-btn next" id="traceNext">Next letter →</button>
+        </div>
+        <div class="trace-praise" id="tracePraise">Great tracing! ⭐</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="match">
+    <div class="section-head">
+      <span class="eyebrow">GAME</span>
+      <h2>Listen &amp; Match</h2>
+      <p>Pip says a word — tap the letter it starts with!</p>
+      <p class="ua-line">Піп каже слово — натисни на букву, з якої воно починається!</p>
+    </div>
+    <div class="match-card">
+      <div class="match-score" id="matchScore">🍎 Score: 0</div>
+      <button class="play-sound-btn" id="playSoundBtn">🔊</button>
+      <div class="match-prompt">Tap ▶ to hear the word, then pick the letter!</div>
+      <div class="match-options" id="matchOptions"></div>
+      <div class="match-feedback" id="matchFeedback"></div>
+    </div>
+  </section>
+
+  <section class="block" id="numbers">
+    <div class="section-head">
+      <span class="eyebrow">1-2-3</span>
+      <h2>Count the Apples</h2>
+      <p>Pick a number and watch the apples fill the basket.</p>
+      <p class="ua-line">Обери число і подивись, як яблука наповнюють кошик.</p>
+    </div>
+    <div class="num-row" id="numRow"></div>
+    <div class="counting-stage">
+      <div class="counting-word" id="countingWord">Tap a number to start!</div>
+      <div class="apple-row" id="appleRow"></div>
+    </div>
+  </section>
+
+  <div class="back-cta">
+    <a class="cta" href="tracker.html">← Back to my tracker</a>
+  </div>
+</main>
+
+<script>
+  // ---------- Speech ----------
+  function speak(text){
+    if(!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'en-US';
+    u.rate = 0.85;
+    u.pitch = 1.05;
+    window.speechSynthesis.speak(u);
+  }
+
+  const alphabet = [
+    ['A','Apple','🍎'],['B','Ball','⚽'],['C','Cat','🐱'],['D','Dog','🐶'],
+    ['E','Egg','🥚'],['F','Fish','🐟'],['G','Grapes','🍇'],['H','Hat','👒'],
+    ['I','Ice cream','🍦'],['J','Juice','🧃'],['K','Kite','🪁'],['L','Lion','🦁'],
+    ['M','Moon','🌙'],['N','Nut','🌰'],['O','Orange','🍊'],['P','Pig','🐷'],
+    ['Q','Queen','👑'],['R','Rainbow','🌈'],['S','Sun','☀️'],['T','Tree','🌳'],
+    ['U','Umbrella','☂️'],['V','Van','🚐'],['W','Watermelon','🍉'],['X','X-ray','🩻'],
+    ['Y','Yo-yo','🪀'],['Z','Zebra','🦓']
+  ];
+
+  // ---------- Alphabet flip cards ----------
+  const abcGrid = document.getElementById('abcGrid');
+  alphabet.forEach((item, i)=>{
+    const [letter, word, emoji] = item;
+    const colorClass = 'lc' + (i % 4);
+    const card = document.createElement('div');
+    card.className = 'letter-card';
+    card.innerHTML = `
+      <div class="letter-card-inner">
+        <div class="letter-face letter-front ${colorClass}">${letter}
+          <button class="speak-btn" aria-label="Play sound">🔊</button>
+        </div>
+        <div class="letter-face letter-back">
+          <div class="emoji">${emoji}</div>
+          <div class="word">${word}</div>
+        </div>
+      </div>`;
+    card.addEventListener('click', ()=>{
+      card.classList.toggle('flipped');
+      speak(card.classList.contains('flipped') ? word : letter);
+      if(card.classList.contains('flipped')){
+        pipMarkLetterSeen(letter);
+        pipAnnounceNewBadges();
+      }
+    });
+    card.querySelector('.speak-btn').addEventListener('click', (e)=>{
+      e.stopPropagation();
+      speak(card.classList.contains('flipped') ? word : letter);
+    });
+    abcGrid.appendChild(card);
+  });
+
+  // ---------- Tracing ----------
+  const tracePicker = document.getElementById('tracePicker');
+  const canvas = document.getElementById('traceCanvas');
+  const ctx = canvas.getContext('2d');
+  let traceIndex = 0;
+
+  alphabet.forEach((item, i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'pick-btn';
+    btn.textContent = item[0];
+    btn.addEventListener('click', ()=> setTraceLetter(i));
+    tracePicker.appendChild(btn);
+  });
+
+  function refreshPicker(){
+    document.querySelectorAll('.pick-btn').forEach((b,i)=>{
+      b.classList.toggle('current', i === traceIndex);
+    });
+  }
+
+  function drawGuide(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.font = '700 220px "Baloo 2", cursive';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = 'rgba(122,90,56,0.16)';
+    ctx.fillText(alphabet[traceIndex][0], canvas.width/2, canvas.height/2 + 14);
+  }
+
+  function setTraceLetter(i){
+    traceIndex = i;
+    refreshPicker();
+    drawGuide();
+    document.getElementById('tracePraise').classList.remove('show');
+  }
+
+  let drawing = false;
+  let lastPoint = null;
+  let strokeCount = 0;
+
+  function getPos(evt){
+    const rect = canvas.getBoundingClientRect();
+    const clientX = evt.touches ? evt.touches[0].clientX : evt.clientX;
+    const clientY = evt.touches ? evt.touches[0].clientY : evt.clientY;
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    return { x: (clientX - rect.left) * scaleX, y: (clientY - rect.top) * scaleY };
+  }
+
+  function startDraw(evt){
+    drawing = true;
+    lastPoint = getPos(evt);
+    evt.preventDefault();
+  }
+  function moveDraw(evt){
+    if(!drawing) return;
+    const p = getPos(evt);
+    ctx.strokeStyle = '#E8483E';
+    ctx.lineWidth = 14;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    ctx.moveTo(lastPoint.x, lastPoint.y);
+    ctx.lineTo(p.x, p.y);
+    ctx.stroke();
+    lastPoint = p;
+    strokeCount++;
+    if(strokeCount === 30){
+      const praise = document.getElementById('tracePraise');
+      praise.textContent = 'Great tracing! ⭐';
+      praise.classList.add('show');
+    }
+    evt.preventDefault();
+  }
+  function endDraw(){ drawing = false; }
+
+  canvas.addEventListener('mousedown', startDraw);
+  canvas.addEventListener('mousemove', moveDraw);
+  window.addEventListener('mouseup', endDraw);
+  canvas.addEventListener('touchstart', startDraw, {passive:false});
+  canvas.addEventListener('touchmove', moveDraw, {passive:false});
+  canvas.addEventListener('touchend', endDraw);
+
+  document.getElementById('traceHear').addEventListener('click', ()=> speak(alphabet[traceIndex][0]));
+  document.getElementById('traceClear').addEventListener('click', ()=>{
+    strokeCount = 0;
+    drawGuide();
+    document.getElementById('tracePraise').classList.remove('show');
+  });
+  document.getElementById('traceNext').addEventListener('click', ()=>{
+    strokeCount = 0;
+    setTraceLetter((traceIndex + 1) % alphabet.length);
+  });
+
+  if(document.fonts && document.fonts.ready){
+    document.fonts.ready.then(()=> setTraceLetter(0));
+  } else {
+    setTraceLetter(0);
+  }
+
+  // ---------- Listen & Match game ----------
+  let matchScore = 0;
+  let currentTarget = null;
+  let matchLocked = false;
+
+  function shuffle(arr){
+    const a = arr.slice();
+    for(let i=a.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i],a[j]] = [a[j],a[i]];
+    }
+    return a;
+  }
+
+  function newRound(){
+    matchLocked = false;
+    document.getElementById('matchFeedback').textContent = '';
+    currentTarget = alphabet[Math.floor(Math.random()*alphabet.length)];
+    const distractors = shuffle(alphabet.filter(a => a[0] !== currentTarget[0])).slice(0,3);
+    const options = shuffle([currentTarget, ...distractors]);
+
+    const optWrap = document.getElementById('matchOptions');
+    optWrap.innerHTML = '';
+    options.forEach(opt=>{
+      const btn = document.createElement('button');
+      btn.className = 'match-btn';
+      btn.textContent = opt[0];
+      btn.dataset.letter = opt[0];
+      btn.addEventListener('click', ()=> handleMatchPick(btn, opt));
+      optWrap.appendChild(btn);
+    });
+  }
+
+  function handleMatchPick(btn, opt){
+    if(matchLocked) return;
+    const feedback = document.getElementById('matchFeedback');
+    if(opt[0] === currentTarget[0]){
+      matchLocked = true;
+      btn.classList.add('correct');
+      matchScore++;
+      document.getElementById('matchScore').textContent = '🍎 Score: ' + matchScore;
+      feedback.textContent = `Yes! ${currentTarget[1]} starts with ${currentTarget[0]}! 🎉`;
+      speak(`Correct! ${currentTarget[1]} starts with ${currentTarget[0]}`);
+      pipUpdateBest('pipMatchBest', matchScore);
+      pipAnnounceNewBadges();
+      setTimeout(newRound, 1600);
+    } else {
+      matchLocked = true;
+      btn.classList.add('wrong');
+      const optWrap = document.getElementById('matchOptions');
+      const correctBtn = [...optWrap.children].find(b => b.dataset.letter === currentTarget[0]);
+      if(correctBtn) correctBtn.classList.add('correct');
+      feedback.textContent = `Not quite — ${currentTarget[1]} starts with ${currentTarget[0]}!`;
+      speak(`It's ${currentTarget[0]}, for ${currentTarget[1]}`);
+      setTimeout(newRound, 1900);
+    }
+  }
+
+  document.getElementById('playSoundBtn').addEventListener('click', ()=>{
+    if(!currentTarget) return;
+    speak(currentTarget[1]);
+  });
+
+  newRound();
+
+  // ---------- Numbers ----------
+  const numberWords = ['One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten'];
+  const numRow = document.getElementById('numRow');
+  for(let n=1; n<=10; n++){
+    const btn = document.createElement('button');
+    btn.className = 'num-btn';
+    btn.textContent = n;
+    btn.addEventListener('click', ()=> selectNumber(n, btn));
+    numRow.appendChild(btn);
+  }
+
+  function selectNumber(n, btn){
+    document.querySelectorAll('.num-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const word = numberWords[n-1];
+    document.getElementById('countingWord').textContent = `${word} apple${n>1?'s':''}! 🧺`;
+    speak(`${word} apple${n>1?'s':''}`);
+    pipMarkNumberSeen(n);
+    pipAnnounceNewBadges();
+
+    const row = document.getElementById('appleRow');
+    row.innerHTML = '';
+    for(let i=0;i<n;i++){
+      const a = document.createElement('div');
+      a.className = 'mini-apple';
+      a.style.animationDelay = (i*0.08)+'s';
+      row.appendChild(a);
+    }
+  }
+
+  pipApplyMood();
+  pipInitChrome();
+</script>
+
+<footer class="site-footer">
+  <div class="footer-inner"><span class="footer-pip">🍎</span> Pip's Orchard — Learn English · <a href="parents.html">Для батьків</a></div>
+</footer>
+<button class="to-top-btn" id="toTopBtn" aria-label="Back to top">↑</button>
+
+
+</body>
+</html>

@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#8FD9EA">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Pip's Orchard">
+<title>Animals &amp; Sounds — Pip's Orchard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="app.js"></script>
+<style>
+  #ahero{
+    background:linear-gradient(180deg,var(--sky-top) 0%, var(--sky-bottom) 78%);
+    padding-bottom:24px;
+  }
+  .ahero-content{position:relative; z-index:4; text-align:center; padding:18px 6% 6px;}
+  .ahero-content h1{font-size:2.3rem; margin:8px 0 6px; color:var(--bark-dark);}
+  .ahero-content p{margin:0; color:#4A3B2C; font-size:1.05rem;}
+
+  .subnav{
+    position:sticky; top:78px; z-index:20;
+    display:flex; gap:10px; justify-content:center; flex-wrap:wrap;
+    background:rgba(255,248,234,0.92); backdrop-filter:blur(6px);
+    padding:12px 5%; box-shadow:0 4px 14px rgba(58,46,35,0.08);
+  }
+  .subnav a{
+    text-decoration:none; font-weight:700; font-size:0.85rem; color:var(--bark-dark);
+    background:#fff; padding:8px 16px; border-radius:20px; box-shadow:var(--shadow);
+    white-space:nowrap;
+  }
+
+  main{max-width:1100px; margin:0 auto; padding:36px 6% 80px;}
+  .section-head{text-align:center; max-width:600px; margin:0 auto 28px;}
+  .section-head h2{font-size:1.9rem; color:var(--bark-dark); margin:8px 0 6px;}
+  .section-head p{color:#5A4A38; margin:0;}
+  section.block{scroll-margin-top:140px; margin-bottom:70px;}
+
+  .animal-grid{
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(130px,1fr));
+    gap:16px;
+  }
+  .animal-card{
+    background:var(--cream); border-radius:20px; box-shadow:var(--shadow);
+    padding:16px 10px; text-align:center; cursor:pointer;
+  }
+  .animal-card:nth-child(4n+1){background:linear-gradient(160deg,#fff,#FFE8F0);}
+  .animal-card:nth-child(4n+2){background:linear-gradient(160deg,#fff,#E3FBF6);}
+  .animal-card:nth-child(4n+3){background:linear-gradient(160deg,#fff,#F1E9FF);}
+  .animal-card:nth-child(4n+4){background:linear-gradient(160deg,#fff,#E3F5FC);}
+  .animal-emoji{font-size:2.4rem; margin-bottom:6px;}
+  .animal-name{font-family:'Baloo 2'; font-weight:700; color:var(--bark-dark); font-size:0.95rem;}
+  .animal-sound{font-size:0.78rem; color:var(--apple-red); font-weight:700; margin-top:2px;}
+
+  /* ---------- Quiz ---------- */
+  .aq-wrap{display:flex; gap:30px; justify-content:center; align-items:center; flex-wrap:wrap;}
+  .aq-stage{background:var(--cream); border-radius:26px; box-shadow:var(--shadow); padding:30px; text-align:center; min-width:160px;}
+  .aq-play-btn{
+    width:90px; height:90px; border-radius:50%; border:none; cursor:pointer;
+    background:var(--blue); color:#fff; font-size:2.2rem;
+    box-shadow:0 8px 0 #2E7BA8, var(--shadow);
+  }
+  .aq-play-btn:active{transform:translateY(6px); box-shadow:0 2px 0 #2E7BA8;}
+  .aq-hint{margin-top:10px; font-weight:700; color:#5A4A38; font-size:0.85rem;}
+  .aq-card{background:var(--cream); border-radius:26px; box-shadow:var(--shadow); padding:26px; text-align:center; max-width:340px;}
+  .aq-score{font-family:'Baloo 2'; font-weight:700; color:var(--apple-red); margin-bottom:10px;}
+  .aq-options{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:6px;}
+  .aq-btn{
+    border:none; border-radius:14px; padding:10px 6px; font-family:'Quicksand'; font-weight:700;
+    background:#fff; color:var(--bark-dark); box-shadow:var(--shadow); cursor:pointer; font-size:0.85rem;
+    display:flex; flex-direction:column; align-items:center; gap:2px;
+  }
+  .aq-btn .e{font-size:1.5rem;}
+  .aq-btn.correct{background:var(--leaf-light); color:#fff; animation:pop .3s ease;}
+  .aq-btn.wrong{background:#F2A39C; animation:shake .35s ease;}
+  @keyframes pop{0%{transform:scale(1);}50%{transform:scale(1.1);}100%{transform:scale(1);}}
+  @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-7px);}75%{transform:translateX(7px);}}
+  .aq-feedback{margin-top:12px; font-weight:700; min-height:1.4rem; color:var(--bark-dark);}
+
+  .back-cta{display:flex; justify-content:center; margin-top:10px;}
+
+  @media (max-width:600px){
+    .ahero-content h1{font-size:1.9rem;}
+    .animal-grid{grid-template-columns:repeat(auto-fill, minmax(100px,1fr)); gap:12px;}
+    .subnav{top:64px;}
+    main{padding:26px 5% 70px;}
+  }
+</style>
+</head>
+<body>
+
+<section class="section" id="ahero">
+  <div class="sun"></div>
+  <div class="cloud cloud1"></div>
+  <div class="cloud cloud2"></div>
+
+  <nav class="nav-bar">
+    <a href="index.html" class="logo"><span class="logo-dot"></span> Pip's Orchard</a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="letters.html">Letters &amp; Numbers</a>
+      <a href="emotions.html">Emotions</a>
+      <a href="colors.html">Colors &amp; Shapes</a>
+      <a href="animals.html" class="active">Animals</a>
+      <a href="days.html">Days &amp; Months</a>
+      <a href="clock.html">Clock</a>
+      <a href="tracker.html">My Tracker</a>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>
+  </nav>
+
+  <div class="ahero-content">
+    <span class="eyebrow">WHO SAYS WHAT? 🐾</span>
+    <h1>Animals &amp; Sounds</h1>
+    <p>Meet farm, wild, and pet animals — and hear the sound each one makes!</p>
+    <p class="ua-line">Знайомся з домашніми, дикими тваринами та улюбленцями — і слухай, як кожна з них звучить!</p>
+  </div>
+  <div class="mascot-block" style="justify-content:center; margin-top:6px;">
+    <div class="pip-wrap"><div class="pip">
+      <div class="pip-crown"></div><div class="pip-leaf"></div><div class="pip-stem"></div>
+      <div class="pip-body"></div>
+      <div class="pip-eye l"></div><div class="pip-eye r"></div>
+      <div class="pip-cheek l"></div><div class="pip-cheek r"></div>
+      <div class="pip-mouth"></div>
+      <div class="pip-arm l"></div><div class="pip-arm r"></div>
+    </div></div>
+    <div class="speech">Moo! Woof! Roar! Let's explore! 🐮</div>
+  </div>
+</section>
+
+<div class="subnav">
+  <a href="#farm">🚜 Farm</a>
+  <a href="#wild">🌴 Wild</a>
+  <a href="#pets">🏠 Pets</a>
+  <a href="#aquiz">🎧 Quiz</a>
+</div>
+
+<main>
+  <section class="block" id="farm">
+    <div class="section-head">
+      <span class="eyebrow">FARM</span>
+      <h2>Farm Animals</h2>
+      <p>Tap an animal to hear its sound.</p>
+      <p class="ua-line">Натисни на тварину, щоб почути її звук.</p>
+    </div>
+    <div class="animal-grid" id="farmGrid"></div>
+  </section>
+
+  <section class="block" id="wild">
+    <div class="section-head">
+      <span class="eyebrow">WILD</span>
+      <h2>Wild Animals</h2>
+      <p>Roar, hoot, hiss — listen closely!</p>
+      <p class="ua-line">Рик, ух-ух, ш-ш-ш — слухай уважно!</p>
+    </div>
+    <div class="animal-grid" id="wildGrid"></div>
+  </section>
+
+  <section class="block" id="pets">
+    <div class="section-head">
+      <span class="eyebrow">PETS</span>
+      <h2>Pets</h2>
+      <p>Our friendly companions at home.</p>
+      <p class="ua-line">Наші дружні улюбленці вдома.</p>
+    </div>
+    <div class="animal-grid" id="petsGrid"></div>
+  </section>
+
+  <section class="block" id="aquiz">
+    <div class="section-head">
+      <span class="eyebrow">GAME</span>
+      <h2>Animal Sound Quiz</h2>
+      <p>Listen to the sound, then pick the right animal!</p>
+      <p class="ua-line">Послухай звук, а потім обери правильну тварину!</p>
+    </div>
+    <div class="aq-wrap">
+      <div class="aq-stage">
+        <button class="aq-play-btn" id="aqPlayBtn">🔊</button>
+        <div class="aq-hint">Tap to hear the sound</div>
+      </div>
+      <div class="aq-card">
+        <div class="aq-score" id="aqScore">🍎 Score: 0</div>
+        <div>Which animal makes this sound?</div>
+        <div class="aq-options" id="aqOptions"></div>
+        <div class="aq-feedback" id="aqFeedback"></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="back-cta">
+    <a class="cta" href="days.html">Days &amp; Months →</a>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner"><span class="footer-pip">🍎</span> Pip's Orchard — Learn English · <a href="parents.html">Для батьків</a></div>
+</footer>
+<button class="to-top-btn" id="toTopBtn" aria-label="Back to top">↑</button>
+
+<script>
+  function speak(text){
+    if(!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'en-US'; u.rate = 0.85; u.pitch = 1.05;
+    window.speechSynthesis.speak(u);
+  }
+
+  const farm = [
+    ['Cow','🐮','Moo!'], ['Pig','🐷','Oink!'], ['Sheep','🐑','Baa!'],
+    ['Horse','🐴','Neigh!'], ['Chicken','🐔','Cluck!']
+  ];
+  const wild = [
+    ['Lion','🦁','Roar!'], ['Elephant','🐘','Toot!'], ['Monkey','🐵','Ooh ooh!'],
+    ['Snake','🐍','Hiss!'], ['Owl','🦉','Hoot!']
+  ];
+  const pets = [
+    ['Dog','🐶','Woof!'], ['Cat','🐱','Meow!']
+  ];
+  const allAnimals = [...farm, ...wild, ...pets];
+
+  function buildGrid(containerId, list){
+    const grid = document.getElementById(containerId);
+    list.forEach(([name, emoji, sound])=>{
+      const card = document.createElement('div');
+      card.className = 'animal-card';
+      card.innerHTML = `
+        <div class="animal-emoji">${emoji}</div>
+        <div class="animal-name">${name}</div>
+        <div class="animal-sound">${sound}</div>`;
+      card.addEventListener('click', ()=>{
+        speak(`${name} says ${sound.replace('!','')}`);
+        pipMarkAnimalSeen(name);
+        pipAnnounceNewBadges();
+      });
+      grid.appendChild(card);
+    });
+  }
+  buildGrid('farmGrid', farm);
+  buildGrid('wildGrid', wild);
+  buildGrid('petsGrid', pets);
+
+  // ---------- Quiz ----------
+  let aqScore = 0;
+  let aqAnswer = '';
+  let aqLocked = false;
+  let aqCurrent = null;
+
+  function shuffle(arr){
+    const a = arr.slice();
+    for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+    return a;
+  }
+
+  function newAqRound(){
+    aqLocked = false;
+    document.getElementById('aqFeedback').textContent = '';
+    aqCurrent = allAnimals[Math.floor(Math.random()*allAnimals.length)];
+    aqAnswer = aqCurrent[0];
+
+    const wrongs = shuffle(allAnimals.filter(a => a[0] !== aqAnswer)).slice(0,3);
+    const options = shuffle([aqCurrent, ...wrongs]);
+    const optWrap = document.getElementById('aqOptions');
+    optWrap.innerHTML = '';
+    options.forEach(([name, emoji])=>{
+      const btn = document.createElement('button');
+      btn.className = 'aq-btn';
+      btn.innerHTML = `<span class="e">${emoji}</span><span>${name}</span>`;
+      btn.dataset.name = name;
+      btn.addEventListener('click', ()=> handleAqPick(btn, name));
+      optWrap.appendChild(btn);
+    });
+  }
+
+  function playCurrentSound(){
+    if(!aqCurrent) return;
+    speak(aqCurrent[2].replace('!',''));
+  }
+
+  document.getElementById('aqPlayBtn').addEventListener('click', playCurrentSound);
+
+  function handleAqPick(btn, name){
+    if(aqLocked) return;
+    const feedback = document.getElementById('aqFeedback');
+    if(name === aqAnswer){
+      aqLocked = true;
+      btn.classList.add('correct');
+      aqScore++;
+      document.getElementById('aqScore').textContent = '🍎 Score: ' + aqScore;
+      feedback.textContent = `Yes! It's a ${aqAnswer}! 🎉`;
+      speak(`Correct! ${aqAnswer} says ${aqCurrent[2].replace('!','')}`);
+      pipUpdateBest('pipAnimalQuizBest', aqScore);
+      pipAnnounceNewBadges();
+      setTimeout(newAqRound, 1600);
+    } else {
+      aqLocked = true;
+      btn.classList.add('wrong');
+      const optWrap = document.getElementById('aqOptions');
+      const correctBtn = [...optWrap.children].find(b => b.dataset.name === aqAnswer);
+      if(correctBtn) correctBtn.classList.add('correct');
+      feedback.textContent = `Not quite — it's a ${aqAnswer}!`;
+      speak(`It's a ${aqAnswer}. ${aqAnswer} says ${aqCurrent[2].replace('!','')}`);
+      setTimeout(newAqRound, 1900);
+    }
+  }
+
+  newAqRound();
+  pipApplyMood();
+  pipInitChrome();
+</script>
+
+</body>
+</html>
