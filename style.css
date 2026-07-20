@@ -105,13 +105,6 @@ body{ padding-top:78px; padding-bottom:56px; }
 }
 .footer-inner .footer-pip{font-size:1rem;}
 .footer-inner a{color:var(--apple-red); text-decoration:none;}
-.install-btn{
-  display:inline-flex; align-items:center; gap:6px; margin-top:6px;
-  border:none; border-radius:16px; padding:7px 16px; cursor:pointer;
-  background:var(--apple-red); color:#fff; font-family:'Quicksand'; font-weight:700; font-size:0.78rem;
-  box-shadow:0 4px 10px rgba(232,72,62,0.35);
-}
-.install-btn:hover{filter:brightness(1.05);}
 
 /* ---------- Back-to-top button ---------- */
 .to-top-btn{
