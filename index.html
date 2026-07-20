@@ -125,6 +125,11 @@
     width:min(46vw, 560px);
     height:520px;
     flex-shrink:0;
+    overflow:hidden;
+  }
+  .orchard-canvas{
+    position:absolute; left:0; right:0; bottom:0; height:520px;
+    transform-origin:bottom center;
   }
   .ground{
     position:absolute; bottom:0; left:-10%; width:120%; height:90px;
@@ -346,6 +351,7 @@
   @media (max-width:880px){
     .hero-content{flex-direction:column; align-items:center;}
     .orchard{width:min(90vw,420px); height:440px; margin-top:8px;}
+    .orchard-canvas{transform:scale(0.846);}
     .hero-text{text-align:center; max-width:520px;}
     .hero-text h1{font-size:2.5rem;}
     .mascot-block{position:relative !important; left:auto !important; bottom:auto !important; justify-content:center; margin:18px auto 0;}
@@ -369,6 +375,7 @@
     .hero-text p{font-size:1rem;}
     .cta{width:100%; justify-content:center; padding:15px 20px;}
     .orchard{height:360px; width:min(94vw,340px);}
+    .orchard-canvas{transform:scale(0.692);}
     .fol1{width:180px;height:160px;} .fol2{width:160px;height:150px;} .fol3{width:150px;height:135px;} .fol4{width:135px;height:125px;}
     .trunk{height:140px;}
     .pip{width:64px; height:72px; transform:scale(0.85);}
@@ -393,6 +400,7 @@
   @media (max-width:380px){
     .hero-text h1{font-size:1.7rem;}
     .orchard{height:320px;}
+    .orchard-canvas{transform:scale(0.615);}
     .basket-wrap{width:150px; height:150px; transform:scale(0.78);}
   }
 
@@ -466,19 +474,21 @@
     </div>
 
     <div class="orchard">
-      <div class="foliage fol1"></div>
-      <div class="foliage fol2"></div>
-      <div class="foliage fol3"></div>
-      <div class="foliage fol4"></div>
-      <div class="tree-apple ta1"></div>
-      <div class="tree-apple ta2"></div>
-      <div class="tree-apple ta3"></div>
-      <div class="tree-apple ta4"></div>
-      <div class="tree-apple ta5"></div>
-      <div class="trunk"></div>
-      <div class="ground"></div>
-      <div class="ground-apple-slot" id="groundApple">
-        <div style="width:30px;height:28px;border-radius:50%;background:radial-gradient(circle at 35% 30%, var(--apple-shine), var(--apple-red)); box-shadow:0 4px 6px rgba(0,0,0,0.25);"></div>
+      <div class="orchard-canvas">
+        <div class="foliage fol1"></div>
+        <div class="foliage fol2"></div>
+        <div class="foliage fol3"></div>
+        <div class="foliage fol4"></div>
+        <div class="tree-apple ta1"></div>
+        <div class="tree-apple ta2"></div>
+        <div class="tree-apple ta3"></div>
+        <div class="tree-apple ta4"></div>
+        <div class="tree-apple ta5"></div>
+        <div class="trunk"></div>
+        <div class="ground"></div>
+        <div class="ground-apple-slot" id="groundApple">
+          <div style="width:30px;height:28px;border-radius:50%;background:radial-gradient(circle at 35% 30%, var(--apple-shine), var(--apple-red)); box-shadow:0 4px 6px rgba(0,0,0,0.25);"></div>
+        </div>
       </div>
     </div>
   </div>
