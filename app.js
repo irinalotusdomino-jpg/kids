@@ -10,6 +10,51 @@ if('serviceWorker' in navigator){
     navigator.serviceWorker.register('service-worker.js').catch(()=>{});
   });
 }
+
+// ---------- PWA: install button ----------
+let pipDeferredInstallPrompt = null;
+
+function pipIsStandalone(){
+  return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+}
+function pipIsIOS(){
+  return /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
+}
+
+window.addEventListener('beforeinstallprompt', (e)=>{
+  e.preventDefault();
+  pipDeferredInstallPrompt = e;
+  document.querySelectorAll('.install-btn').forEach(b => b.style.display = 'inline-flex');
+});
+
+window.addEventListener('appinstalled', ()=>{
+  pipDeferredInstallPrompt = null;
+  document.querySelectorAll('.install-btn').forEach(b => b.style.display = 'none');
+});
+
+function pipInitInstallButton(){
+  const btns = document.querySelectorAll('.install-btn');
+  if(!btns.length || pipIsStandalone()) return;
+
+  if(pipIsIOS()){
+    btns.forEach(b => b.style.display = 'inline-flex');
+  }
+
+  btns.forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      if(pipDeferredInstallPrompt){
+        pipDeferredInstallPrompt.prompt();
+        await pipDeferredInstallPrompt.userChoice;
+        pipDeferredInstallPrompt = null;
+        btns.forEach(b => b.style.display = 'none');
+      } else if(pipIsIOS()){
+        alert("На iPhone / iPad:\n1. Натисніть кнопку «Поділитися» ⬆️ внизу екрана Safari\n2. Оберіть «На екран «Домой»»");
+      } else {
+        alert("Відкрийте меню браузера (⋮) і оберіть «Встановити застосунок» або «Додати на головний екран».");
+      }
+    });
+  });
+}
 const PIP_TODOS_KEY   = 'pipTodos';
 const PIP_STREAK_KEY  = 'pipStreak';
 const PIP_LAST_DONE   = 'pipLastCompleteDate';
@@ -403,4 +448,6 @@ function pipInitChrome(){
       });
     });
   }
+
+  pipInitInstallButton();
 }
